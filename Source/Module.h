@@ -23,6 +23,7 @@ public:
 
 	virtual update_status PreUpdate()
 	{
+		
 		return UPDATE_CONTINUE;
 	}
 
