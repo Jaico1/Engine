@@ -46,6 +46,18 @@ bool ModuleOpenGL::Init()
 
 update_status ModuleOpenGL::PreUpdate()
 {
+	int height, width;
+
+	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+
+	if (WindowResized(width, height)) {
+		glViewport(0, 0, width, height);
+	}
+
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	return UPDATE_CONTINUE;
 
 }
@@ -59,6 +71,8 @@ update_status ModuleOpenGL::Update()
 
 update_status ModuleOpenGL::PostUpdate()
 {
+
+	SDL_GL_SwapWindow(App->GetWindow()->window);
 	return UPDATE_CONTINUE;
 }
 
@@ -74,7 +88,12 @@ bool ModuleOpenGL::CleanUp()
 	return true;
 }
 
-void ModuleOpenGL::WindowResized(unsigned width, unsigned height)
+bool ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
+	return false;
+}
+
+void* ModuleOpenGL::returnContext() {
+	return context;
 }
 

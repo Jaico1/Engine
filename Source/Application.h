@@ -9,6 +9,7 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModuleRenderExercise;
+class ModuleImGUI;
 
 class Application
 {
