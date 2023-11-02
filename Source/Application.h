@@ -10,6 +10,7 @@ class ModuleTextures;
 class ModuleInput;
 class ModuleRenderExercise;
 class ModuleImGUI;
+class ModuleProgram;
 
 class Application
 {

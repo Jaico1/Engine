@@ -25,16 +25,19 @@ bool ModuleWindow::Init()
 	else
 	{
 		//Create window
-		int currentWidth = SCREEN_WIDTH;
-		int currentHeight = SCREEN_HEIGHT;
+		int width = SCREEN_WIDTH;
+		int height = SCREEN_HEIGHT;
 		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
+		
+		currentHeight = height;
+		currentWidth = width;
 
 		if(FULLSCREEN == true)
 		{
 			flags |= SDL_WINDOW_FULLSCREEN;
 		}
 
-		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, currentWidth, currentHeight, flags);
+		window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height, flags);
 
 		if(window == NULL)
 		{
@@ -50,7 +53,17 @@ bool ModuleWindow::Init()
 	}
 
 	return ret;
+}void ModuleWindow::SetCurrentWindowSize() {
+	int height;
+	int width;
+
+	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+
+	currentHeight = height;
+	currentWidth = width; 
 }
+
+
 
 // Called before quitting
 bool ModuleWindow::CleanUp()
