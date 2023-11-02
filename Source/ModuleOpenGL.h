@@ -19,6 +19,11 @@ public:
 	bool CleanUp();
 	bool WindowResized(unsigned width, unsigned height);
 	void* returnContext();
+	unsigned int VBO;
+	unsigned int VAO;
+	unsigned int vertexShader;
+	unsigned int shaderProgram;
+	unsigned int fragmentShader;
 
 
 public:
