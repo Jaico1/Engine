@@ -9,8 +9,10 @@ class ModuleWindow;
 class ModuleTextures;
 class ModuleInput;
 class ModuleRenderExercise;
-class ModuleImGUI;
+class ModuleEditor;
 class ModuleProgram;
+class ModuleDebugDraw;
+class ModuleRender;
 
 class Application
 {
@@ -26,12 +28,20 @@ public:
     ModuleOpenGL* GetOpenGL() { return render; }
     ModuleWindow* GetWindow() { return window; }
     ModuleInput*  GetInput() { return input; }
+    ModuleEditor* GetEditor() { return editor; }
+    ModuleDebugDraw* GetDebug() { return debug; }
+    ModuleProgram* GetProgram() { return program; }
+    ModuleRender* GetRender() { return renderer; }
 
 private:
 
     ModuleOpenGL* render = nullptr;
     ModuleWindow* window = nullptr;
     ModuleInput* input = nullptr;
+    ModuleEditor* editor = nullptr;
+    ModuleDebugDraw* debug = nullptr; 
+    ModuleProgram* program = nullptr;
+    ModuleRender* renderer = nullptr;
 
     std::list<Module*> modules;
 

@@ -22,8 +22,8 @@ public:
 	unsigned int VBO;
 	unsigned int VAO;
 	unsigned int vertexShader;
+	unsigned int fragmentShader; 
 	unsigned int shaderProgram;
-	unsigned int fragmentShader;
 
 
 public:

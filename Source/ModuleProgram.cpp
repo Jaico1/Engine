@@ -1,4 +1,9 @@
 #include "ModuleProgram.h"
+#include "Globals.h"
+#include "Application.h"
+#include "SDL.h"
+#include "GL\glew.h"
+#include "ModuleOpenGL.h"
 
 ModuleProgram::ModuleProgram() {
 
@@ -10,20 +15,91 @@ ModuleProgram::~ModuleProgram() {
 
 bool ModuleProgram::Init() {
 
-	vertexShaderSource = "#version 330 core\n"
+	const char* vertexShaderSource = "#version 330 core\n"
 		"layout (location = 0) in vec3 aPos;\n"
 		"void main()\n"
 		"{\n"
 		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
 		"}\0";
 
-	fragmentShaderSource = "#version 330 core\n"
+	const char* fragmentShaderSource = "#version 330 core\n"
 		"out vec4 FragColor;\n"
 		"void main()\n"
 		"{\n"
 		"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 		"}\0";
 
+	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER,vertexShaderSource);
+	unsigned int fragmentShader= CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
+
+	this->program = CreateProgram(vertexShader, fragmentShader);
+
 	return true;
+
+}
+
+update_status ModuleProgram::PreUpdate() {
+	return UPDATE_CONTINUE;
+}
+update_status ModuleProgram::Update() {
+	return UPDATE_CONTINUE;
+}
+update_status ModuleProgram::PostUpdate() {
+	return UPDATE_CONTINUE;
+}
+bool ModuleProgram::CleanUp() {
+	return true;
+}
+
+
+unsigned ModuleProgram::CompileShader(unsigned type, const char* source){
+
+	unsigned shader_id = glCreateShader(type);
+	glShaderSource(shader_id, 1, &source, 0);
+	glCompileShader(shader_id);
+	int res = GL_FALSE;
+	glGetShaderiv(shader_id, GL_COMPILE_STATUS, &res);
+	if (res == GL_FALSE)
+	{
+		int len = 0;
+		glGetShaderiv(shader_id, GL_INFO_LOG_LENGTH, &len);
+		if (len > 0)
+		{
+			int written = 0;
+			char* info = (char*)malloc(len);
+			glGetShaderInfoLog(shader_id, len, &written, info);
+			LOG("Log Info: %s", info);
+			free(info);
+		}
+	}
+	return shader_id;
+
+
+}
+unsigned ModuleProgram::CreateProgram(unsigned vtx_shader, unsigned frg_shader){
+
+	unsigned program_id = glCreateProgram();
+	glAttachShader(program_id, vtx_shader);
+	glAttachShader(program_id, frg_shader);
+	glLinkProgram(program_id);
+	int res;
+	glGetProgramiv(program_id, GL_LINK_STATUS, &res);
+	if (res == GL_FALSE)
+	{
+		int len = 0;
+		glGetProgramiv(program_id, GL_INFO_LOG_LENGTH, &len);
+		if (len > 0)
+		{
+			int written = 0;
+			char* info = (char*)malloc(len);
+			glGetProgramInfoLog(program, len, &written, info);
+			LOG("Program Log Info: %s", info);
+			free(info);
+		}
+	}
+	glDeleteShader(vtx_shader);
+	glDeleteShader(frg_shader);
+	return program_id;
+
 
 }

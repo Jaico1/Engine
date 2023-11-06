@@ -1,0 +1,76 @@
+#include "ModuleRender.h"
+#include "Globals.h"
+#include "Application.h"
+#include "SDL.h"
+#include "GL\glew.h"
+#include "ModuleOpenGL.h"
+#include "ModuleWindow.h"
+#include "ModuleProgram.h"
+
+ModuleRender::ModuleRender() {
+
+}
+ModuleRender::~ModuleRender(){
+
+}
+
+bool ModuleRender::Init() {
+
+	VBO = CreateTriangleVBO();
+
+	return true;
+
+
+}
+update_status ModuleRender::PreUpdate() {
+
+	return UPDATE_CONTINUE;
+
+}
+update_status ModuleRender::Update() {
+
+	RenderVBO(VBO, App->GetProgram()->program);
+
+	return UPDATE_CONTINUE;
+
+}
+update_status ModuleRender::PostUpdate() {
+
+	return UPDATE_CONTINUE;
+
+}
+bool ModuleRender::CleanUp() {
+
+	DestroyVBO(VBO);
+	return true;
+}
+
+
+unsigned ModuleRender::CreateTriangleVBO(){
+
+	float vertices[] = { -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f
+	};
+
+	unsigned VBO;
+
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	return VBO;
+}
+void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
+
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glUseProgram(shaderProgram);
+
+}
+void ModuleRender::DestroyVBO(unsigned VBO){
+
+
+		glDeleteBuffers(1, &VBO);
+	
+
+}

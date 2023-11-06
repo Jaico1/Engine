@@ -7,9 +7,15 @@ public:
 	~ModuleProgram();
 	bool Init();
 
+	update_status PreUpdate();
+	update_status Update();
+	update_status PostUpdate();
+	bool CleanUp();
+
+	unsigned CompileShader(unsigned type, const char* source);
+	unsigned CreateProgram(unsigned vtx_shader, unsigned frg_shader);
 
 public:
-	const char* vertexShaderSource;
-	const char* fragmentShaderSource;
+	unsigned program;
 };
 
