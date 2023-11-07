@@ -65,6 +65,7 @@ void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glUseProgram(shaderProgram);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 }
 void ModuleRender::DestroyVBO(unsigned VBO){
