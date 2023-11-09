@@ -14,8 +14,37 @@ ModuleRender::~ModuleRender(){
 
 }
 
-bool ModuleRender::Init() {
+bool ModuleRender::Init() { 
 
+	const char* vertexShaderSource = "#version 430 core\n"
+		"layout (location = 0) in vec3 my_vertex_position;\n"
+		"layout(location = 0) uniform mat4 model;\n"
+		"layout(location = 1) uniform mat4 view;\n"
+		"layout(location = 2) uniform mat4 proj;\n"
+		"void main(){\n"
+		"   gl_Position = proj*view*model*vec4(my_vertex_position, 1.0)\n"
+		"}\0";
+
+	const char* fragmentShaderSource = "#version 430 core\n"
+		"out vec4 FragColor;\n"
+		"\n"
+		"void main(){\n"
+		"	FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
+		"}\0";
+
+	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
 	
 
 	Frustum frustum;
@@ -43,7 +72,7 @@ update_status ModuleRender::PreUpdate() {
 }
 update_status ModuleRender::Update() {
 
-	RenderVBO(VBO, App->GetProgram()->program);
+	RenderVBO(VBO, shaderProgram);
 
 	return UPDATE_CONTINUE;
 
@@ -86,8 +115,7 @@ void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	
 	glDrawArrays(GL_TRIANGLES, 0, 3);
-	glDisableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	
 
 }
 

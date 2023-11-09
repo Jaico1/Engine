@@ -29,8 +29,8 @@ public:
     ModuleWindow* GetWindow() { return window; }
     ModuleInput*  GetInput() { return input; }
     ModuleEditor* GetEditor() { return editor; }
+    //ModuleProgram* GetProgram() { return program; }
     ModuleDebugDraw* GetDebug() { return debug; }
-    ModuleProgram* GetProgram() { return program; }
     ModuleRender* GetRender() { return renderer; }
 
 private:

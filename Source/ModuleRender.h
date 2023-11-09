@@ -22,6 +22,7 @@ public:
 public:
 
 	unsigned VBO;
+	unsigned shaderProgram;
 	math::float4x4 model;
 	math::float4x4 view;
 	math::float4x4 proj;
