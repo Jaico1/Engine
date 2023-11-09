@@ -1,5 +1,8 @@
 #include "Globals.h"
 #include "ModuleDebugDraw.h"
+#include "Application.h"
+#include "ModuleRender.h"
+#include "ModuleWindow.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
 #include "DebugDraw.h"     // Debug Draw API. Notice that we need the DEBUG_DRAW_IMPLEMENTATION macro here!
@@ -592,6 +595,8 @@ bool ModuleDebugDraw::Init()
 {
     implementation = new DDRenderInterfaceCoreGL;
     dd::initialize(implementation);
+    dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
+    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
     return true;
 }
 
@@ -608,7 +613,12 @@ bool ModuleDebugDraw::CleanUp()
 
 update_status  ModuleDebugDraw::Update()
 {
+    dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
+    dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
+    Draw(App->GetRender()->view, App->GetRender()->proj, App->GetWindow()->currentWidth, App->GetWindow()->currentHeight);
 	return UPDATE_CONTINUE;
+    
+
 }
 
 void ModuleDebugDraw::Draw(const float4x4& view, const float4x4& proj, unsigned width, unsigned height)

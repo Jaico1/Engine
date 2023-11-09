@@ -1,6 +1,7 @@
 #pragma once
 #include "Module.h"
 #include "Globals.h"
+#include "MathGeoLib.h" 
 
 struct SDL_Texture;
 struct SDL_Renderer;
@@ -19,13 +20,11 @@ public:
 	bool CleanUp();
 	bool WindowResized(unsigned width, unsigned height);
 	void* returnContext();
-	unsigned int VBO;
-	unsigned int VAO;
-	unsigned int vertexShader;
-	unsigned int fragmentShader; 
-	unsigned int shaderProgram;
+
+	
 
 
 public:
 	void* context;
+	
 };

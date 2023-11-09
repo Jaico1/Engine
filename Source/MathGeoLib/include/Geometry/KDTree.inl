@@ -23,6 +23,11 @@
 #include "../Math/assume.h"
 #include "../Math/MathFunc.h"
 
+
+#ifdef max
+#undef max
+#endif 
+
 MATH_BEGIN_NAMESPACE
 
 template<typename T>
