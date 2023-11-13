@@ -16,12 +16,13 @@ ModuleProgram::~ModuleProgram() {
 bool ModuleProgram::Init() {
 
 	const char* vertexShaderSource = "#version 430\n"
-		"layout (location = 0) in vec3 my_vertex_position;\n"
-		"layout(location = 0) uniform mat4 model;\n"
-		"layout(location = 1) uniform mat4 view;\n"
-		"layout(location = 2) uniform mat4 proj;\n"
-		"{\n"
-		"   gl_Position = proj*view*model*vec4(vertex_position, 1.0)\n"
+    "layout (location = 0) in vec3 my_vertex_position;\n"
+    "layout(location = 0) uniform mat4 model;\n"
+    "layout(location = 1) uniform mat4 view;\n"
+    "layout(location = 2) uniform mat4 proj;\n"
+    "void main()\n"
+    "{\n"
+    "   gl_Position = proj * view * model * vec4(my_vertex_position, 1.0);\n"
 		"}\0";
 
 	const char* fragmentShaderSource = "#version 430 \n"
@@ -36,6 +37,30 @@ bool ModuleProgram::Init() {
 
 	this->program = CreateProgram(vertexShader, fragmentShader);
 
+	GLint success;
+	GLchar infoLog[512];
+
+	// Check vertex shader compilation status
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		printf("Vertex shader compilation failed: %s\n", infoLog);
+	}
+
+	// Check fragment shader compilation status
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		printf("Fragment shader compilation failed: %s\n", infoLog);
+	}
+
+	// Check program linking status
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		printf("Shader program linking failed: %s\n", infoLog);
+	}
+
 	return true;
 
 }
@@ -47,6 +72,8 @@ update_status ModuleProgram::Update() {
 	return UPDATE_CONTINUE;
 }
 update_status ModuleProgram::PostUpdate() {
+
+
 	return UPDATE_CONTINUE;
 }
 bool ModuleProgram::CleanUp() {

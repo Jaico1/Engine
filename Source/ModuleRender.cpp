@@ -6,6 +6,7 @@
 #include "ModuleOpenGL.h"
 #include "ModuleProgram.h"
 #include "ModuleWindow.h"
+#include "MathGeoLib.h" 
 
 ModuleRender::ModuleRender() {
 
@@ -15,37 +16,6 @@ ModuleRender::~ModuleRender(){
 }
 
 bool ModuleRender::Init() { 
-
-	const char* vertexShaderSource = "#version 430 core\n"
-		"layout (location = 0) in vec3 my_vertex_position;\n"
-		"layout(location = 0) uniform mat4 model;\n"
-		"layout(location = 1) uniform mat4 view;\n"
-		"layout(location = 2) uniform mat4 proj;\n"
-		"void main(){\n"
-		"   gl_Position = proj*view*model*vec4(my_vertex_position, 1.0)\n"
-		"}\0";
-
-	const char* fragmentShaderSource = "#version 430 core\n"
-		"out vec4 FragColor;\n"
-		"\n"
-		"void main(){\n"
-		"	FragColor = vec4(1.0f, 0.0f, 0.0f, 1.0f);\n"
-		"}\0";
-
-	unsigned int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	unsigned int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-
-	shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-	
 
 	Frustum frustum;
 	frustum.type = FrustumType::PerspectiveFrustum;
@@ -72,7 +42,7 @@ update_status ModuleRender::PreUpdate() {
 }
 update_status ModuleRender::Update() {
 
-	RenderVBO(VBO, shaderProgram);
+	RenderVBO(VBO, App->GetProgram()->program);
 
 	return UPDATE_CONTINUE;
 
@@ -120,16 +90,15 @@ void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
 }
 
 float4x4 ModuleRender::LookAt(float3 target, float3 eye, float3 up) {
-
 	float4x4 matrix;
 
-	math::float3 f(target - eye); f.Normalize();
-	math::float3 r(f.Cross(up)); r.Normalize();
-	math::float3 u(r.Cross(f));
-	matrix[0][0] = r.x; matrix[0][1] = r.y; matrix[0][2] = r.z;
-	matrix[1][0] = u.x; matrix[1][1] = u.y; matrix[1][2] = u.z;
-	matrix[2][0] = -f.x; matrix[2][1] = -f.y; matrix[2][2] = -f.z;
-	matrix[0][3] = -r.Dot(eye); matrix[1][3] = -u.Dot(eye); matrix[2][3] = f.Dot(eye);
+	math::float3 f = (target - eye).Normalized();
+	math::float3 r = up.Cross(f).Normalized();
+	math::float3 u = f.Cross(r);
+
+	matrix[0][0] = r.x; matrix[0][1] = r.y; matrix[0][2] = r.z; matrix[0][3] = -r.Dot(eye);
+	matrix[1][0] = u.x; matrix[1][1] = u.y; matrix[1][2] = u.z; matrix[1][3] = -u.Dot(eye);
+	matrix[2][0] = -f.x; matrix[2][1] = -f.y; matrix[2][2] = -f.z; matrix[2][3] = f.Dot(eye);
 	matrix[3][0] = 0.0f; matrix[3][1] = 0.0f; matrix[3][2] = 0.0f; matrix[3][3] = 1.0f;
 
 	return matrix;
