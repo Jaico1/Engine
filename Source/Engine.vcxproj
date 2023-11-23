@@ -104,7 +104,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>.\glew-2.1.0\lib\Release\x64</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>.\glew-2.1.0\lib\Release\x64;DirectXTex\Bin\Desktop_2019\x64\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>glew32.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -194,6 +194,9 @@
     <ClCompile Include="ModuleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\json.hpp" />
+    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image.h" />
+    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image_write.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="debugdraw.h" />
     <ClInclude Include="Dummy.h" />

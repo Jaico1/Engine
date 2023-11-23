@@ -345,6 +345,15 @@
     <ClInclude Include="TinyGlft\tiny_gltf.h">
       <Filter>TinyGlft</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\json.hpp">
+      <Filter>TinyGlft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image.h">
+      <Filter>TinyGlft</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image_write.h">
+      <Filter>TinyGlft</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">

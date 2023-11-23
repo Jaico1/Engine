@@ -36,7 +36,7 @@
 //
 #ifndef TINY_GLTF_H_
 #define TINY_GLTF_H_
-
+#define _CRT_SECURE_NO_WARNINGS
 #include <array>
 #include <cassert>
 #include <cmath>  // std::fabs
