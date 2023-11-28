@@ -24,13 +24,26 @@ bool ModuleWindow::Init()
 	}
 	else
 	{
+
+		SDL_DisplayMode dm;
+		if (SDL_GetDesktopDisplayMode(0, &dm) != 0)
+		{
+			LOG("SDL_GetDesktopDisplayMode failed: %s", SDL_GetError());
+			ret = false;
+		}
+		else
+		{
 		//Create window
-		int width = SCREEN_WIDTH;
-		int height = SCREEN_HEIGHT;
-		Uint32 flags = SDL_WINDOW_SHOWN |  SDL_WINDOW_OPENGL;
-		
-		currentHeight = height;
-		currentWidth = width;
+			float scale = 0.75f;
+
+			// Calculate window size based on the scaling factor
+			int width = static_cast<int>(dm.w * scale);
+			int height = static_cast<int>(dm.h * scale);
+
+			Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+
+			currentHeight = height;
+			currentWidth = width;
 
 		if(FULLSCREEN == true)
 		{
@@ -47,13 +60,17 @@ bool ModuleWindow::Init()
 		else
 		{
 			//Get window surface
-			
+
 			screen_surface = SDL_GetWindowSurface(window);
+
+		}
 		}
 	}
 
 	return ret;
-}void ModuleWindow::SetCurrentWindowSize() {
+}
+
+void ModuleWindow::SetCurrentWindowSize() {
 	int height;
 	int width;
 
