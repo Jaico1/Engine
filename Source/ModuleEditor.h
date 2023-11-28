@@ -14,6 +14,8 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 
+	void RenderImGui();
+
 	bool CleanUp();
 	
 };

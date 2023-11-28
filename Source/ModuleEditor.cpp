@@ -7,6 +7,7 @@
 #include "ImGUI\imgui.h"
 #include "ImGUI\imgui_impl_sdl2.h"
 #include "ImGUI\imgui_impl_opengl3.h"
+#include "GL\glew.h"
 
 
 ModuleEditor::ModuleEditor() {
@@ -15,6 +16,11 @@ ModuleEditor::ModuleEditor() {
 
 ModuleEditor::~ModuleEditor() {
 
+}
+
+size_t GetMemoryUsage() {
+    
+    return 0;
 }
 
 bool ModuleEditor::Init() {
@@ -52,9 +58,12 @@ update_status ModuleEditor::PreUpdate() {
 
 update_status ModuleEditor::Update() {
     bool show_demo_window = true;
-    ImGui::ShowDemoWindow(&show_demo_window);
-    ImGui::Render();
+    //ImGui::ShowDemoWindow(&show_demo_window);
     
+    
+    RenderImGui();
+    ImGui::Render();
+
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     
     
@@ -84,6 +93,39 @@ bool ModuleEditor::CleanUp()
     ImGui::DestroyContext();
 
     return true;
+}
+
+
+void ModuleEditor::RenderImGui() {
+    //ImGui_ImplSDL2_NewFrame(App->GetWindow()->window);
+    
+    ImGui::Begin("FPS Graph");
+
+    static float fpsValues[1000] = { 0 };
+    static int fpsValuesIndex = 0;
+
+    float currentFps = ImGui::GetIO().Framerate;
+    fpsValues[fpsValuesIndex] = currentFps;
+    fpsValuesIndex = (fpsValuesIndex + 1) % IM_ARRAYSIZE(fpsValues);
+
+    ImGui::PlotLines("FPS", fpsValues, IM_ARRAYSIZE(fpsValues), fpsValuesIndex, "FPS", 0.0f, 60.0f, ImVec2(0, 80));
+    ImGui::Text("Current FPS: %.2f", currentFps);
+
+    size_t memoryUsage = GetMemoryUsage();
+    ImGui::Text("Memory Consumption: %lu bytes", memoryUsage);
+
+    // Display hardware information
+    ImGui::Text("GPU Vendor: %s", glGetString(GL_VENDOR));
+    ImGui::Text("GPU Renderer: %s", glGetString(GL_RENDERER));
+
+    // Display software versions
+    ImGui::Text("SDL Version: %d.%d.%d", SDL_MAJOR_VERSION, SDL_MINOR_VERSION, SDL_PATCHLEVEL);
+    ImGui::Text("OpenGL Version: %s", glGetString(GL_VERSION));
+    
+
+    ImGui::End();
+
+   
 }
 
 
