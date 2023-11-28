@@ -14,8 +14,8 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 
-	void RenderImGui();
-
+	void RenderPerformance();
+	void RenderProperties();
 	bool CleanUp();
 	
 };

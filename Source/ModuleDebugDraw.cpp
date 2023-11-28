@@ -1,7 +1,7 @@
 #include "Globals.h"
 #include "ModuleDebugDraw.h"
 #include "Application.h"
-#include "ModuleRender.h"
+#include "ModuleCamera.h"
 #include "ModuleWindow.h"
 
 #define DEBUG_DRAW_IMPLEMENTATION
@@ -615,7 +615,7 @@ update_status  ModuleDebugDraw::Update()
 {
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
-    Draw(App->GetRender()->view, App->GetRender()->proj, App->GetWindow()->currentWidth, App->GetWindow()->currentHeight);
+    Draw(App->GetCamera()->view, App->GetCamera()->proj, App->GetWindow()->currentWidth, App->GetWindow()->currentHeight);
 	return UPDATE_CONTINUE;
     
 

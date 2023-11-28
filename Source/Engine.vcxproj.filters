@@ -129,6 +129,7 @@
     </ClCompile>
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleGeometryLoader.cpp" />
+    <ClCompile Include="ModuleCamera.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -354,6 +355,7 @@
     <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image_write.h">
       <Filter>TinyGlft</Filter>
     </ClInclude>
+    <ClInclude Include="ModuleCamera.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">

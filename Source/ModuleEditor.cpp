@@ -40,6 +40,8 @@ bool ModuleEditor::Init() {
     
 
     ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window,App->GetOpenGL()->context);
+    ImGui::SetNextWindowSize(ImVec2(800, 600));
+
     ImGui_ImplOpenGL3_Init("#version 460");
     
    
@@ -61,7 +63,8 @@ update_status ModuleEditor::Update() {
     //ImGui::ShowDemoWindow(&show_demo_window);
     
     
-    RenderImGui();
+    RenderPerformance();
+    RenderProperties();
     ImGui::Render();
 
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -95,11 +98,19 @@ bool ModuleEditor::CleanUp()
     return true;
 }
 
+void ModuleEditor::RenderProperties() {
 
-void ModuleEditor::RenderImGui() {
+    ImGui::Begin("Properties");
+
+
+    ImGui::End();
+
+}
+
+void ModuleEditor::RenderPerformance() {
     //ImGui_ImplSDL2_NewFrame(App->GetWindow()->window);
     
-    ImGui::Begin("FPS Graph");
+    ImGui::Begin("Performance");
 
     static float fpsValues[1000] = { 0 };
     static int fpsValuesIndex = 0;
