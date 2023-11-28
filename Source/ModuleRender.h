@@ -17,7 +17,7 @@ public:
 	unsigned CreateTriangleVBO();
 	void RenderVBO(unsigned VBO, unsigned shaderProgram);
 	void DestroyVBO(unsigned VBO);
-	float4x4 LookAt(float3 target, float3 eye, float3 up);
+	
 
 public:
 

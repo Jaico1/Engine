@@ -7,12 +7,12 @@
 #include "ModuleProgram.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleRender.h"
-<<<<<<< Updated upstream
+
 #include "ModuleCamera.h"
-=======
+
 #include "ModuleGeometryLoader.h"
 
->>>>>>> Stashed changes
+
 
 
 

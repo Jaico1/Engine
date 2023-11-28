@@ -18,26 +18,12 @@ ModuleRender::~ModuleRender(){
 
 bool ModuleRender::Init() { 
 
-<<<<<<< Updated upstream
-	
+
 	model = App->GetCamera()->model;
 	view = App->GetCamera()->view;
 	proj = App->GetCamera()->proj;
-=======
-	Frustum frustum;
-	frustum.type = FrustumType::PerspectiveFrustum;
-	frustum.pos = float3::zero;
-	frustum.front = -float3::unitZ;
-	frustum.up = float3::unitY;
-	frustum.nearPlaneDistance = 0.1f;
-	frustum.farPlaneDistance = 100.0f;
-	frustum.verticalFov = math::pi / 4.0f;
-	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * (App->GetWindow()->currentWidth / App->GetWindow()->currentHeight));
 
-	model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
-	view = LookAt(math::float3(0.0f, 1.f, 4.0f), math::float3(0.0f, 1.0f, -10.0f), math::float3::unitY);
-	proj = frustum.ProjectionMatrix();
->>>>>>> Stashed changes
+
     VBO = CreateTriangleVBO();
 	return true;
 
