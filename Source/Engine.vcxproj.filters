@@ -346,13 +346,13 @@
     <ClInclude Include="TinyGlft\tiny_gltf.h">
       <Filter>TinyGlft</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\json.hpp">
+    <ClInclude Include="TinyGlft\json.hpp">
       <Filter>TinyGlft</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image.h">
+    <ClInclude Include="TinyGlft\stb_image.h">
       <Filter>TinyGlft</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image_write.h">
+    <ClInclude Include="TinyGlft\stb_image_write.h">
       <Filter>TinyGlft</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCamera.h" />
@@ -386,6 +386,12 @@
     </None>
     <None Include="MathGeoLib\include\Math\Matrix.inl">
       <Filter>MathGeoLib</Filter>
+    </None>
+    <None Include="TinyGlft\Triangle.gltf">
+      <Filter>TinyGlft</Filter>
+    </None>
+    <None Include="..\..\..\..\Downloads\simpleTriangle.bin">
+      <Filter>TinyGlft</Filter>
     </None>
   </ItemGroup>
 </Project>

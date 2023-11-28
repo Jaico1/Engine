@@ -195,9 +195,6 @@
     <ClCompile Include="ModuleWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\json.hpp" />
-    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image.h" />
-    <ClInclude Include="..\..\..\..\Downloads\tinygltf-2.8.18\stb_image_write.h" />
     <ClInclude Include="Application.h" />
     <ClInclude Include="debugdraw.h" />
     <ClInclude Include="Dummy.h" />
@@ -278,15 +275,20 @@
     <ClInclude Include="ModuleProgram.h" />
     <ClInclude Include="ModuleRender.h" />
     <ClInclude Include="ModuleWindow.h" />
+    <ClInclude Include="TinyGlft\json.hpp" />
+    <ClInclude Include="TinyGlft\stb_image.h" />
+    <ClInclude Include="TinyGlft\stb_image_write.h" />
     <ClInclude Include="TinyGlft\tiny_gltf.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\..\..\Downloads\simpleTriangle.bin" />
     <None Include="MathGeoLib\include\Geometry\KDTree.inl" />
     <None Include="MathGeoLib\include\Geometry\QuadTree.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_AVX.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_CPP.inl" />
     <None Include="MathGeoLib\include\Geometry\TriangleMesh_IntersectRay_SSE.inl" />
     <None Include="MathGeoLib\include\Math\Matrix.inl" />
+    <None Include="TinyGlft\Triangle.gltf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

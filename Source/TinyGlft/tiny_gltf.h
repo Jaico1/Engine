@@ -36,7 +36,9 @@
 //
 #ifndef TINY_GLTF_H_
 #define TINY_GLTF_H_
-#define _CRT_SECURE_NO_WARNINGS
+
+#define NOMINMAX
+
 #include <array>
 #include <cassert>
 #include <cmath>  // std::fabs
@@ -1767,6 +1769,9 @@ class TinyGLTF {
 #if defined(TINYGLTF_INTERNAL_NOMINMAX)
 #undef NOMINMAX
 #endif
+
+
+
 
 #if defined(__GLIBCXX__)  // mingw
 

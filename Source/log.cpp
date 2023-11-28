@@ -1,4 +1,6 @@
 #pragma once
+#include <windows.h>
+
 #include "Globals.h"
 #include <windows.h>
 

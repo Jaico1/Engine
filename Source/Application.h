@@ -13,7 +13,11 @@ class ModuleEditor;
 class ModuleProgram;
 class ModuleDebugDraw;
 class ModuleRender;
+<<<<<<< Updated upstream
 class ModuleCamera;
+=======
+class ModuleGeometryLoader;
+>>>>>>> Stashed changes
 
 class Application
 {
@@ -33,7 +37,11 @@ public:
     ModuleProgram* GetProgram() { return program; }
     ModuleDebugDraw* GetDebug() { return debug; }
     ModuleRender* GetRender() { return renderer; }
+<<<<<<< Updated upstream
     ModuleCamera* GetCamera() { return camera; }
+=======
+    ModuleGeometryLoader* GetMesh() { return mesh; }
+>>>>>>> Stashed changes
 
 private:
 
@@ -44,7 +52,11 @@ private:
     ModuleDebugDraw* debug = nullptr; 
     ModuleProgram* program = nullptr;
     ModuleRender* renderer = nullptr;
+<<<<<<< Updated upstream
     ModuleCamera* camera = nullptr;
+=======
+    ModuleGeometryLoader* mesh= nullptr;
+>>>>>>> Stashed changes
 
     std::list<Module*> modules;
 

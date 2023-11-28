@@ -1,5 +1,7 @@
 #pragma once
 #include "Module.h"
+
+
 class ModuleGeometryLoader :
     public Module
 {
@@ -14,6 +16,6 @@ public:
 	update_status PostUpdate();
 
 	bool CleanUp();
-
 };
+
 

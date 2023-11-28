@@ -7,7 +7,12 @@
 #include "ModuleProgram.h"
 #include "ModuleDebugDraw.h"
 #include "ModuleRender.h"
+<<<<<<< Updated upstream
 #include "ModuleCamera.h"
+=======
+#include "ModuleGeometryLoader.h"
+
+>>>>>>> Stashed changes
 
 
 
@@ -23,6 +28,7 @@ Application::Application()
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(mesh = new ModuleGeometryLoader());
 	modules.push_back(editor = new ModuleEditor());
 	
 	

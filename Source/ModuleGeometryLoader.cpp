@@ -7,12 +7,16 @@
 #include "SDL.h"
 #include "GL\glew.h"
 #include "MathGeoLib.h" 
+#include "ModuleProgram.h"
+#include "Application.h"
+
 
 using namespace std; 
 
 class Model;
 class Mesh;
 class Primitive;
+
 
 class Model {
 public:
@@ -24,13 +28,14 @@ public:
 class Mesh {
 public:
 	void Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
+	void Render();
 	unsigned vbo;
 
 
 };
 
 
-
+Mesh mesh;
 
 ModuleGeometryLoader::ModuleGeometryLoader() {
 	
@@ -40,6 +45,12 @@ ModuleGeometryLoader::~ModuleGeometryLoader(){
 
 bool ModuleGeometryLoader::Init(){
 
+	Model model = Model();
+	Mesh mesh =  Mesh();
+	model.Load("../Source/TinyGlft/Triangle.gltf");
+
+	
+	
 	return true;
 }
 update_status ModuleGeometryLoader::PreUpdate(){
@@ -47,6 +58,8 @@ update_status ModuleGeometryLoader::PreUpdate(){
 	return UPDATE_CONTINUE;
 }
 update_status ModuleGeometryLoader::Update(){
+
+	mesh.Render();
 
 	return UPDATE_CONTINUE;
 }
@@ -105,4 +118,15 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		}
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 	}
+}
+
+void Mesh::Render()
+{
+	glUseProgram(App->GetProgram()->program);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)(sizeof(float) * 3));
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 }
