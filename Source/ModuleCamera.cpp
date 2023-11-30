@@ -38,15 +38,15 @@ bool ModuleCamera::Init() {
 	frustum.verticalFov = math::pi / 4.0f;
 	frustum.horizontalFov = 2.f * atanf(tanf(frustum.verticalFov * 0.5f) * (App->GetWindow()->currentWidth / App->GetWindow()->currentHeight));
 	frustum.pos = float3(0.0f, 1.0f, -2.0f);
-	frustum.front = float3::unitZ;
+	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
-	model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
-	view = LookAt(math::float3(0.0f, 0.0f, 0.0f), math::float3(0.0f, 10.0f, -30.0f), math::float3::unitY);
+	//model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
+	view = LookAt(math::float3(0.0f, 0.0f, 0.0f), math::float3(5.0f, 5.0f, 5.0f), math::float3::unitY);
 	proj = frustum.ProjectionMatrix();
 
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadMatrixf(*proj.v);
+	/*glMatrixMode(GL_PROJECTION);
+	glLoadMatrixf(*proj.v);*/
 
 	
 

@@ -9,6 +9,7 @@
 #include "MathGeoLib.h" 
 #include "ModuleProgram.h"
 #include "Application.h"
+#include "ModuleCamera.h"
 
 
 using namespace std; 
@@ -21,7 +22,9 @@ class Primitive;
 class Model {
 public:
 	void Load(const char* assetFileName);
-
+	void Draw();
+private: 
+	std::vector<Mesh*>Meshes;
 
 };
 
@@ -30,9 +33,12 @@ public:
 	void Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void Render();
+	void CreateVAO();
 	void DestroyVBO(unsigned VBO);
-
+	
+	int numIndices;
 	unsigned vbo;
+	unsigned vao;
 	unsigned ebo;
 
 
@@ -40,6 +46,7 @@ public:
 
 
 Mesh mesh;
+Model model;
 
 ModuleGeometryLoader::ModuleGeometryLoader() {
 
@@ -49,9 +56,9 @@ ModuleGeometryLoader::~ModuleGeometryLoader() {
 
 bool ModuleGeometryLoader::Init() {
 
-	Model model = Model();
-	Mesh mesh = Mesh();
-	model.Load("../Source/TinyGlft/Triangle.gltf");
+	
+	model.Load("assets/TriangleWithoutIndices.gltf");
+	
 
 
 
@@ -63,7 +70,7 @@ update_status ModuleGeometryLoader::PreUpdate() {
 }
 update_status ModuleGeometryLoader::Update() {
 
-	//mesh.Render();
+	model.Draw();
 
 	return UPDATE_CONTINUE;
 }
@@ -80,6 +87,8 @@ bool ModuleGeometryLoader::CleanUp() {
 void Model::Load(const char* assetFileName){
 
 
+	//const char* filePath=App->CreateFilePath()
+
 	tinygltf::TinyGLTF gltfContext;
 	tinygltf::Model model;
 	std::string error, warning;
@@ -95,6 +104,8 @@ void Model::Load(const char* assetFileName){
 		{
 			Mesh* mesh = new Mesh;
 			mesh->Load(model, srcMesh, primitive);
+			Meshes.push_back(mesh);
+
 		}
 	}
 
@@ -102,6 +113,8 @@ void Model::Load(const char* assetFileName){
 
 void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
 {
+
+	CreateVAO();
 	const auto& itPos = primitive.attributes.find("POSITION");
 	if (itPos != primitive.attributes.end())
 	{
@@ -115,12 +128,16 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		glGenBuffers(1, &vbo);
 		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * posAcc.count, bufferPos, GL_STATIC_DRAW);
-		float3* ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
+		float* ptr = reinterpret_cast<float*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
 		if (ptr) {
+
 			for (size_t i = 0; i < posAcc.count; ++i){
+				for (size_t j = 0; j < 3; j++)
+				{
+					ptr[i*3+j] = *reinterpret_cast<const float*>(bufferPos);
+					bufferPos += sizeof(float);
+				}
 			
-			ptr[i] = *reinterpret_cast<const float3*>(bufferPos);
-			bufferPos += posView.byteStride;
 
 			}
 		}
@@ -133,23 +150,59 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 
+		numIndices = posAcc.count;
+
 
 	}
 }
+
+void Mesh::CreateVAO() {
+	
+		glGenVertexArrays(1, &vao);
+		glBindVertexArray(vao);
+		//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * numIndices));
+
+		glBindVertexArray(0);
+	
+}
+
+
 
 
 void Mesh::Render()
 {
 	glUseProgram(App->GetProgram()->program);
+
+	float4x4 model = float4x4::identity;
+	float4x4 view = App->GetCamera()->view;
+	float4x4 proj = App->GetCamera()->proj;
+
+	glUniformMatrix4fv(0, 1, GL_TRUE, &model[0][0]);
+	glUniformMatrix4fv(1, 1, GL_TRUE,&view[0][0]);
+	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
+
+
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)(sizeof(float) * 3));
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * numIndices));
+	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		LOG("OpenGL Error after glDrawArrays: %x", error);
+	}
+}
+
+void Model::Draw() {
+	for (int i = 0; i < Meshes.size(); i++)
+	{
+		Meshes[i]->Render();
 	}
 }
 

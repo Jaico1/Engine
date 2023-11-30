@@ -130,6 +130,7 @@
     <ClCompile Include="ModuleRender.cpp" />
     <ClCompile Include="ModuleGeometryLoader.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
+    <ClCompile Include="Model.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -356,6 +357,7 @@
       <Filter>TinyGlft</Filter>
     </ClInclude>
     <ClInclude Include="ModuleCamera.h" />
+    <ClInclude Include="Model.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">

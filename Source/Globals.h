@@ -18,4 +18,5 @@ enum update_status
 #define SCREEN_HEIGHT 480
 #define FULLSCREEN false
 #define VSYNC true
+#define ASSET_PATH "assets/"
 #define TITLE "Super Awesome Engine"
