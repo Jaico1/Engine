@@ -28,8 +28,12 @@ public:
 class Mesh {
 public:
 	void Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
+	void LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void Render();
+	void DestroyVBO(unsigned VBO);
+
 	unsigned vbo;
+	unsigned ebo;
 
 
 };
@@ -38,38 +42,38 @@ public:
 Mesh mesh;
 
 ModuleGeometryLoader::ModuleGeometryLoader() {
-	
+
 }
-ModuleGeometryLoader::~ModuleGeometryLoader(){
+ModuleGeometryLoader::~ModuleGeometryLoader() {
 }
 
-bool ModuleGeometryLoader::Init(){
+bool ModuleGeometryLoader::Init() {
 
 	Model model = Model();
-	Mesh mesh =  Mesh();
+	Mesh mesh = Mesh();
 	model.Load("../Source/TinyGlft/Triangle.gltf");
 
-	
-	
+
+
 	return true;
 }
-update_status ModuleGeometryLoader::PreUpdate(){
+update_status ModuleGeometryLoader::PreUpdate() {
 
 	return UPDATE_CONTINUE;
 }
-update_status ModuleGeometryLoader::Update(){
+update_status ModuleGeometryLoader::Update() {
 
-	mesh.Render();
-
-	return UPDATE_CONTINUE;
-}
-update_status ModuleGeometryLoader::PostUpdate(){
+	//mesh.Render();
 
 	return UPDATE_CONTINUE;
 }
+update_status ModuleGeometryLoader::PostUpdate() {
 
-bool ModuleGeometryLoader::CleanUp(){
+	return UPDATE_CONTINUE;
+}
 
+bool ModuleGeometryLoader::CleanUp() {
+	
 	return true;
 }
 
@@ -109,16 +113,30 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		const unsigned char* bufferPos = &(posBuffer.data[posAcc.byteOffset + posView.byteOffset]);
 
 		glGenBuffers(1, &vbo);
+		glBindBuffer(GL_ARRAY_BUFFER, vbo);
 		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 3 * posAcc.count, bufferPos, GL_STATIC_DRAW);
 		float3* ptr = reinterpret_cast<float3*>(glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY));
-		for (size_t i = 0; i < posAcc.count; ++i)
-		{
+		if (ptr) {
+			for (size_t i = 0; i < posAcc.count; ++i){
+			
 			ptr[i] = *reinterpret_cast<const float3*>(bufferPos);
 			bufferPos += posView.byteStride;
+
+			}
 		}
+		else {
+
+			LOG("Error mapping buffer for writing");
+
+		}
+
+		
 		glUnmapBuffer(GL_ARRAY_BUFFER);
+
+
 	}
 }
+
 
 void Mesh::Render()
 {
@@ -129,4 +147,12 @@ void Mesh::Render()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)(sizeof(float) * 3));
 	glDrawArrays(GL_TRIANGLES, 0, 3);
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR) {
+		LOG("OpenGL Error after glDrawArrays: %x", error);
+	}
 }
+
+
+
+

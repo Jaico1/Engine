@@ -36,7 +36,7 @@ update_status ModuleRender::PreUpdate() {
 }
 update_status ModuleRender::Update() {
 
-	RenderVBO(VBO, App->GetProgram()->program);
+	//RenderVBO(VBO, App->GetProgram()->program);
 
 	return UPDATE_CONTINUE;
 
@@ -78,7 +78,7 @@ void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 	
 
 }
