@@ -48,6 +48,13 @@ update_status ModuleInput::Update()
                 if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                     App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
                 break;
+
+            case SDL_KEYDOWN:
+                HandleKeyPress(sdlEvent.button.button);
+                break;
+            case SDL_KEYUP:
+                HandleKeyUnpressed();
+                break;
         }
     }
 
@@ -62,4 +69,18 @@ bool ModuleInput::CleanUp()
 	LOG("Quitting SDL input event subsystem");
 	SDL_QuitSubSystem(SDL_INIT_EVENTS);
 	return true;
+}
+
+void ModuleInput::HandleKeyPress(SDL_Keycode key)
+{
+   
+    pressedKey = key;
+  
+}
+
+void ModuleInput::HandleKeyUnpressed()
+{
+
+    pressedKey = SDLK_UNKNOWN;
+
 }
