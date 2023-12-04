@@ -42,8 +42,8 @@ bool ModuleCamera::Init() {
 	frustum.front = -float3::unitZ;
 	frustum.up = float3::unitY;
 	//model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
-	view = LookAt(math::float3(0.0f, 0.0f, 0.0f), math::float3(0.0f, 5.0f, 15.0f), math::float3::unitY);
-	//view = float4x4(frustum.ViewMatrix());
+	//view = LookAt(math::float3(0.0f, 0.0f, 0.0f), math::float3(0.0f, 5.0f, 15.0f), math::float3::unitY);
+	view = float4x4(frustum.ViewMatrix());
 	proj = frustum.ProjectionMatrix();
 
 
@@ -65,6 +65,7 @@ bool ModuleCamera::Init() {
 update_status ModuleCamera::PreUpdate() {
 
 	HandleInput();
+	//view = LookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
 
 	return UPDATE_CONTINUE;
 }

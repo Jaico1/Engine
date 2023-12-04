@@ -63,8 +63,6 @@ bool ModuleGeometryLoader::Init() {
 	model.Load("./assets/BakerHouse.gltf");
 	
 
-
-
 	return true;
 }
 update_status ModuleGeometryLoader::PreUpdate() {
@@ -143,7 +141,6 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 					bufferPos += sizeof(float);
 				}
 			
-
 			}
 		}
 		else {
@@ -160,12 +157,6 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 
 	}
 }
-
-
-
-
-
-
 
 
 void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
@@ -202,9 +193,6 @@ void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, con
 		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
 	}
 
-		
-
-
 }
 
 void Mesh::CreateVAO() {
@@ -234,12 +222,6 @@ void Mesh::Render()
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
 
-
-	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	/*glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * numIndices));*/
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
 	GLenum error = glGetError();
