@@ -37,10 +37,13 @@ public:
 	void DestroyVBO(unsigned VBO);
 	
 	int numIndices;
+	int vertexCount;
 	unsigned vbo;
 	unsigned vao;
 	unsigned ebo;
 
+
+	float4x4 model = float4x4::FromTRS(math::float3(0.0f, 1.0f, -2.0f), math::float3x3::identity, math::float3(20.0f, 20.0f, 20.0f));
 
 };
 
@@ -57,7 +60,7 @@ ModuleGeometryLoader::~ModuleGeometryLoader() {
 bool ModuleGeometryLoader::Init() {
 
 	
-	model.Load("assets/TriangleWithoutIndices.gltf");
+	model.Load("./assets/BakerHouse.gltf");
 	
 
 
@@ -104,6 +107,8 @@ void Model::Load(const char* assetFileName){
 		{
 			Mesh* mesh = new Mesh;
 			mesh->Load(model, srcMesh, primitive);
+			mesh->LoadEBO(model, srcMesh, primitive);
+			mesh->CreateVAO();
 			Meshes.push_back(mesh);
 
 		}
@@ -114,7 +119,7 @@ void Model::Load(const char* assetFileName){
 void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
 {
 
-	CreateVAO();
+	
 	const auto& itPos = primitive.attributes.find("POSITION");
 	if (itPos != primitive.attributes.end())
 	{
@@ -150,48 +155,92 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 
-		numIndices = posAcc.count;
+		vertexCount = posAcc.count;
 
 
 	}
 }
 
-void Mesh::CreateVAO() {
-	
-		glGenVertexArrays(1, &vao);
-		glBindVertexArray(vao);
-		//glBindBuffer(GL_ARRAY_BUFFER, vbo);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-		glEnableVertexAttribArray(1);
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * numIndices));
 
-		glBindVertexArray(0);
-	
+
+
+
+
+
+
+void Mesh::LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
+{
+
+	if (primitive.indices >= 0)
+	{
+		
+		const tinygltf::Accessor& indAcc = model.accessors[primitive.indices];
+		const tinygltf::BufferView& indView = model.bufferViews[indAcc.bufferView];
+		const unsigned char* buffer = &(model.buffers[indView.buffer].data[indAcc.byteOffset + indView.byteOffset]);
+			numIndices = indAcc.count;
+		glGenBuffers(1, &ebo);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * indAcc.count, nullptr, GL_STATIC_DRAW);
+		unsigned int* ptr = reinterpret_cast<unsigned int*>(glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY));
+		if (indAcc.componentType == TINYGLTF_PARAMETER_TYPE_UNSIGNED_INT)
+		{
+			const uint32_t* bufferInd = reinterpret_cast<const uint32_t*>(buffer);
+			for (uint32_t i = 0; i < numIndices; ++i) ptr[i] = bufferInd[i];
+		}
+		/* TODO indAcc.componentType == TINYGLTF_PARAMETER_TYPE_UNSIGNED_SHORT*/
+		if (indAcc.componentType == TINYGLTF_PARAMETER_TYPE_UNSIGNED_SHORT)
+		{
+			const uint16_t* bufferInd = reinterpret_cast<const uint16_t*>(buffer);
+			for (uint16_t i = 0; i < numIndices; ++i) ptr[i] = bufferInd[i];
+		}
+		/* TODO indAcc.componentType == TINYGLTF_PARAMETER_TYPE_UNSIGNED_BYTE*/
+		if (indAcc.componentType == TINYGLTF_PARAMETER_TYPE_UNSIGNED_BYTE)
+		{
+			const uint8_t* bufferInd = reinterpret_cast<const uint8_t*>(buffer);
+			for (uint8_t i = 0; i < numIndices; ++i) ptr[i] = bufferInd[i];
+		}
+		glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
+	}
+
+		
+
+
 }
 
+void Mesh::CreateVAO() {
 
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 0));
 
+	glBindVertexArray(0);
+
+}
 
 void Mesh::Render()
 {
 	glUseProgram(App->GetProgram()->program);
 
-	float4x4 model = float4x4::identity;
+
 	float4x4 view = App->GetCamera()->view;
 	float4x4 proj = App->GetCamera()->proj;
 
 	glUniformMatrix4fv(0, 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(1, 1, GL_TRUE,&view[0][0]);
+	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
 
 
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glEnableVertexAttribArray(0);
+	//glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	/*glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * numIndices));
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * numIndices));*/
+	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
@@ -205,6 +254,7 @@ void Model::Draw() {
 		Meshes[i]->Render();
 	}
 }
+
 
 
 

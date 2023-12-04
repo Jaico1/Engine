@@ -56,8 +56,8 @@ bool ModuleCamera::Init() {
 	cameraUp = float3(0.0f, 1.0f, 0.0f);
 	
 	
-	cameraSpeed = 0.5f;
-	cameraSensitivity = 0.1f;
+	cameraSpeed = 0.01f;
+	cameraSensitivity = 0.01f;
 	
 
 	return true;
@@ -120,6 +120,12 @@ void ModuleCamera::HandleInput() {
 	}
 	if (pressedKey == SDL_SCANCODE_D) {
 		cameraPosition += cameraSpeed * cameraFront.Cross(cameraUp).Normalized();
+	}
+	if (pressedKey == SDL_SCANCODE_Q) {
+		cameraPosition += cameraSpeed * cameraUp;
+	}
+	if (pressedKey == SDL_SCANCODE_E) {
+		cameraPosition -= cameraSpeed * cameraUp;
 	}
 	if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
 		int mouseX, mouseY;
