@@ -131,6 +131,7 @@
     <ClCompile Include="ModuleGeometryLoader.cpp" />
     <ClCompile Include="ModuleCamera.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModuleTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Application.h" />
@@ -358,6 +359,7 @@
     </ClInclude>
     <ClInclude Include="ModuleCamera.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModuleTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ImGui">

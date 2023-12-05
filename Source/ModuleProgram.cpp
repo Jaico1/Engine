@@ -35,7 +35,7 @@ bool ModuleProgram::Init() {
 	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER,vertexShaderSource);
 	unsigned int fragmentShader= CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSource);
 
-	this->program = CreateProgram(vertexShader, fragmentShader);
+	program = CreateProgram(vertexShader, fragmentShader);
 
 	GLint success;
 	GLchar infoLog[512];

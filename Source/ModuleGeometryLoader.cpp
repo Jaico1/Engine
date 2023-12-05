@@ -44,7 +44,7 @@ public:
 	unsigned ebo;
 
 
-	float4x4 model = float4x4::FromTRS(math::float3(0.0f, 1.0f, -2.0f), math::float3x3::identity, math::float3(20.0f, 20.0f, 20.0f));
+	float4x4 model = float4x4::FromTRS(math::float3(0.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(20.0f, 20.0f, 20.0f));
 
 };
 

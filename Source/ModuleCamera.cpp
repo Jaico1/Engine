@@ -56,7 +56,7 @@ bool ModuleCamera::Init() {
 	cameraUp = float3(0.0f, 1.0f, 0.0f);
 	
 	
-	cameraSpeed = 0.01f;
+	cameraSpeed = 0.05f;
 	cameraSensitivity = 0.01f;
 	
 
