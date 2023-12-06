@@ -10,6 +10,7 @@
 #include "ModuleProgram.h"
 #include "Application.h"
 #include "ModuleCamera.h"
+#include "ModuleTexture.h"
 
 
 
@@ -20,12 +21,15 @@ class Mesh;
 class Primitive;
 
 
+
 class Model {
 public:
 	void Load(const char* assetFileName);
 	void Draw();
+	void LoadMaterials(const tinygltf::Model& srcModel);
 private: 
 	std::vector<Mesh*>Meshes;
+	std::vector<unsigned> textures;
 
 };
 
@@ -33,7 +37,7 @@ class Mesh {
 public:
 	void Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
-	void Render();
+	void Render(const std::vector<unsigned>& textures);
 	void CreateVAO();
 	void DestroyVBO(unsigned VBO);
 	
@@ -42,9 +46,10 @@ public:
 	unsigned vbo;
 	unsigned vao;
 	unsigned ebo;
+	unsigned texCoordVBO;
 
 
-	float4x4 model = float4x4::FromTRS(math::float3(0.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(20.0f, 20.0f, 20.0f));
+	float4x4 model = float4x4::FromTRS(math::float3(0.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(20.0f, 20.0f, 10.0f));
 
 };
 
@@ -112,8 +117,27 @@ void Model::Load(const char* assetFileName){
 
 		}
 	}
-
+	LoadMaterials(model);
+	LOG("Textures:", textures.size())
 }
+
+void Model::LoadMaterials(const tinygltf::Model& srcModel)
+{
+	for (const auto& srcMaterial : srcModel.materials)
+	{
+		unsigned textureId = 0;
+		if (srcMaterial.pbrMetallicRoughness.baseColorTexture.index >= 0)
+		{
+			const tinygltf::Texture& texture = srcModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
+			const tinygltf::Image& image = srcModel.images[texture.source];
+			textureId = App->GetTexture()->LoadTexture(image.uri.c_str());
+			LOG("texture id created")
+		}
+		textures.push_back(textureId);
+		LOG("texture id created", textureId)
+	}
+}
+
 
 void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive)
 {
@@ -153,8 +177,28 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		
 		glUnmapBuffer(GL_ARRAY_BUFFER);
 
-		vertexCount = posAcc.count;
+		
 
+
+	}
+
+	const auto& itTexCoord = primitive.attributes.find("TEXCOORD_0");
+	if (itTexCoord != primitive.attributes.end())
+	{
+		const tinygltf::Accessor& texCoordAcc = model.accessors[itTexCoord->second];
+		SDL_assert(texCoordAcc.type == TINYGLTF_TYPE_VEC2);
+		SDL_assert(texCoordAcc.componentType == GL_FLOAT);
+
+		const tinygltf::BufferView& texCoordView = model.bufferViews[texCoordAcc.bufferView];
+		const tinygltf::Buffer& texCoordBuffer = model.buffers[texCoordView.buffer];
+		const unsigned char* bufferTexCoord = &(texCoordBuffer.data[texCoordAcc.byteOffset + texCoordView.byteOffset]);
+
+		glGenBuffers(1, &texCoordVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 2 * texCoordAcc.count, bufferTexCoord, GL_STATIC_DRAW);
+
+
+		vertexCount = texCoordAcc.count;
 
 	}
 }
@@ -202,16 +246,23 @@ void Mesh::CreateVAO() {
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
+
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 0));
+
+	
+
 
 	glBindVertexArray(0);
 
 }
 
-void Mesh::Render()
+void Mesh::Render(const std::vector<unsigned>& textures)
 {
 	glUseProgram(App->GetProgram()->program);
 
@@ -222,6 +273,12 @@ void Mesh::Render()
 	glUniformMatrix4fv(0, 1, GL_TRUE, &model[0][0]);
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
 	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glUniform1i(glGetUniformLocation(App->GetProgram()->program, "diffuse"), 0);
+	/*glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0,(void*)(sizeof(float) * 3 * 3));*/
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
@@ -234,7 +291,7 @@ void Mesh::Render()
 void Model::Draw() {
 	for (int i = 0; i < Meshes.size(); i++)
 	{
-		Meshes[i]->Render();
+		Meshes[i]->Render(textures);
 	}
 }
 

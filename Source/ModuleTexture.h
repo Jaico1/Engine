@@ -13,7 +13,8 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	unsigned LoadTexture();
+	unsigned LoadTexture(const char* filePath);
+	unsigned LoadTexturePNG(const char* filePath);
 	unsigned texture;
 };
 

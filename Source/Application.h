@@ -15,6 +15,7 @@ class ModuleDebugDraw;
 class ModuleRender;
 class ModuleCamera;
 class ModuleGeometryLoader;
+class ModuleTexture;
 
 
 class Application
@@ -37,6 +38,7 @@ public:
     ModuleRender* GetRender() { return renderer; }
     ModuleCamera* GetCamera() { return camera; }
     ModuleGeometryLoader* GetMesh() { return mesh; }
+    ModuleTexture* GetTexture() { return texture; }
 
 
 private:
@@ -50,6 +52,7 @@ private:
     ModuleRender* renderer = nullptr;
     ModuleCamera* camera = nullptr;
     ModuleGeometryLoader* mesh= nullptr;
+    ModuleTexture* texture = nullptr;
     std::list<Module*> modules;
 
 };

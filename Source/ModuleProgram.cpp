@@ -17,19 +17,25 @@ bool ModuleProgram::Init() {
 
 	const char* vertexShaderSource = "#version 430\n"
     "layout (location = 0) in vec3 my_vertex_position;\n"
+	"layout(location = 1) in vec2 vertex_uv0;\n"
     "layout(location = 0) uniform mat4 model;\n"
     "layout(location = 1) uniform mat4 view;\n"
     "layout(location = 2) uniform mat4 proj;\n"
+	"out vec2 uv0;\n"
+
     "void main()\n"
     "{\n"
     "   gl_Position = proj * view * model * vec4(my_vertex_position, 1.0);\n"
+		"uv0 = vertex_uv0;\n"
 		"}\0";
 
 	const char* fragmentShaderSource = "#version 430 \n"
-		"out vec4 FragColor;\n"
+		"out vec4 color;\n"
+		"in vec2 uv0;\n"
+		"uniform sampler2D diffuse;\n"
 		"void main()\n"
 		"{\n"
-		"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
+		"	color =  texture2D(diffuse, uv0);\n"
 		"}\0";
 
 	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER,vertexShaderSource);

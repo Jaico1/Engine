@@ -19,7 +19,7 @@ ModuleRender::~ModuleRender(){
 bool ModuleRender::Init() { 
 
 
-	model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
+	//model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
 	view = App->GetCamera()->view;
 	proj = App->GetCamera()->proj;
 
@@ -66,22 +66,22 @@ unsigned ModuleRender::CreateTriangleVBO(){
 
 	return VBO;
 }
-void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
-
-    glUseProgram(shaderProgram);
-	glUniformMatrix4fv(0, 1, GL_TRUE, &model[0][0]);
-	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
-
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	
-	glDrawArrays(GL_TRIANGLES, 0, 3);
-	
-
-}
+//void ModuleRender::RenderVBO(unsigned VBO, unsigned shaderProgram){
+//
+//    glUseProgram(shaderProgram);
+//	glUniformMatrix4fv(0, 1, GL_TRUE, &model[0][0]);
+//	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
+//	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
+//
+//
+//	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//	glEnableVertexAttribArray(0);
+//	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+//	
+//	glDrawArrays(GL_TRIANGLES, 0, 3);
+//	
+//
+//}
 
 
 
