@@ -48,7 +48,6 @@ update_status ModuleInput::Update()
                 if (sdlEvent.window.event == SDL_WINDOWEVENT_RESIZED || sdlEvent.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
                     App->GetOpenGL()->WindowResized(sdlEvent.window.data1, sdlEvent.window.data2);
                 break;
-
             case SDL_KEYDOWN:
                 HandleKeyPress(sdlEvent.button.button);
                 break;

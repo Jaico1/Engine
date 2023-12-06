@@ -40,7 +40,7 @@ bool ModuleWindow::Init()
 			int width = static_cast<int>(dm.w * scale);
 			int height = static_cast<int>(dm.h * scale);
 
-			Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL;
+			Uint32 flags = SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
 
 			currentHeight = height;
 			currentWidth = width;
