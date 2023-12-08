@@ -615,7 +615,7 @@ update_status  ModuleDebugDraw::Update()
 {
     dd::axisTriad(float4x4::identity, 0.1f, 1.0f);
     dd::xzSquareGrid(-10, 10, 0.0f, 1.0f, dd::colors::Gray);
-    Draw(App->GetCamera()->view, App->GetCamera()->proj, App->GetWindow()->currentWidth, App->GetWindow()->currentHeight);
+    Draw(App->GetCamera()->GetViewMatrix(), App->GetCamera()->GetProjectionMatrix(), App->GetWindow()->GetCurrentWidth(), App->GetWindow()->GetCurrentHeight());
 	return UPDATE_CONTINUE;
     
 

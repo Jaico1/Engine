@@ -15,12 +15,15 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 	bool CleanUp();
-
 	unsigned LoadTexture(const char* filePath);
 	unsigned LoadTexturePNG(const char* filePath);
-	unsigned texture;
 	size_t textureWidth ;
 	size_t textureHeight ;
+
+private:
+	
+	unsigned texture;
+	
 };
 
 

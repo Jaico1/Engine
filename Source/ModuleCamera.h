@@ -20,10 +20,11 @@ public:
 	float3 cameraUp;
 	float3 cameraRight;
 	void HandleInput();
-
+	float4x4 GetViewMatrix() { return view; }
+	float4x4 GetProjectionMatrix() { return proj; }
 	
 
-	
+private:
 
 	float yaw=-91.0f;
 	float pitch=0.0f;
@@ -38,7 +39,7 @@ public:
 	int totalMouseDeltaY;
 
 	
-	math::float4x4 view;
-	math::float4x4 proj;
+	math::float4x4 view ;
+	math::float4x4 proj ;
 };
 

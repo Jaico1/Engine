@@ -41,7 +41,7 @@ bool ModuleEditor::Init() {
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
     
 
-    ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->window,App->GetOpenGL()->context);
+    ImGui_ImplSDL2_InitForOpenGL(App->GetWindow()->GetSDLwindow(),App->GetOpenGL()->context);
     ImGui::SetNextWindowSize(ImVec2(800, 600));
 
     ImGui_ImplOpenGL3_Init("#version 460");
@@ -54,7 +54,7 @@ bool ModuleEditor::Init() {
 update_status ModuleEditor::PreUpdate() {
 
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame(App->GetWindow()->window);
+    ImGui_ImplSDL2_NewFrame(App->GetWindow()->GetSDLwindow());
     ImGui::NewFrame();
     return UPDATE_CONTINUE;
 }
@@ -63,15 +63,21 @@ update_status ModuleEditor::PreUpdate() {
 update_status ModuleEditor::Update() {
     bool show_demo_window = true;
     //ImGui::ShowDemoWindow(&show_demo_window);
-    
-    
+
+    RenderMainMenu();
+    if(showEditorWindows==true){
     RenderPerformance();
     RenderProperties();
+    
     ImGui::Render();
-
+    }
+    ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     
-    
+    if (QUIT)
+    {
+        return UPDATE_STOP;
+    }
 
     return UPDATE_CONTINUE;
 }
@@ -86,7 +92,7 @@ update_status ModuleEditor::PostUpdate() {
         
         ImGui::UpdatePlatformWindows();
         ImGui::RenderPlatformWindowsDefault();
-        SDL_GL_MakeCurrent(App->GetWindow()->window, App->GetOpenGL()->context);
+        SDL_GL_MakeCurrent(App->GetWindow()->GetSDLwindow(), App->GetOpenGL()->context);
     }
     return UPDATE_CONTINUE;
 }
@@ -100,7 +106,61 @@ bool ModuleEditor::CleanUp()
     return true;
 }
 
-void ModuleEditor::RenderProperties() {
+void ModuleEditor::RenderMainMenu() {
+
+    if (ImGui::BeginMainMenuBar()) {
+        if (ImGui::BeginMenu("File")) {
+            // Add menu items under "File"
+            if (ImGui::MenuItem("Quit", "Alt+F4")) {
+                QUIT = true;
+            }
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("Help")) {
+           
+            ImGui::MenuItem("GitHub Page", nullptr, &showGitHubWindow);
+           
+
+            ImGui::MenuItem("About", nullptr, &showAboutWindow);
+
+            ImGui::EndMenu();
+        }
+
+        if (ImGui::BeginMenu("View")) {
+            // Add menu items under "View"
+            ImGui::MenuItem("Toggle Editor Windows", nullptr, &showEditorWindows);
+                
+            ImGui::EndMenu();
+        }
+
+        // Add more menus as needed...
+      
+        ImGui::EndMainMenuBar();
+        
+        
+    }
+
+    // Display About window if the flag is set
+    if (showAboutWindow) {
+        ImGui::Begin("About", &showAboutWindow);
+        ImGui::Text("Information about the engine...");
+        // Add more information or widgets as needed
+        ImGui::End();
+    }
+
+    if (showGitHubWindow) {
+        ImGui::Begin("GitHub", &showGitHubWindow);
+        ImGui::Text("https://github.com/Jaico1/Engine"); 
+        // Add more information or widgets as needed
+        ImGui::End();
+    }
+
+    
+
+}
+
+void ModuleEditor::RenderProperties() const {
 
     ImGui::Begin("Properties");
     
@@ -126,7 +186,7 @@ void ModuleEditor::RenderProperties() {
 
 }
 
-void ModuleEditor::RenderPerformance() {
+void ModuleEditor::RenderPerformance() const{
     //ImGui_ImplSDL2_NewFrame(App->GetWindow()->window);
     
     ImGui::Begin("Performance");

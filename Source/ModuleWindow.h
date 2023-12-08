@@ -22,8 +22,11 @@ public:
 	bool CleanUp();
 	
 	void SetCurrentWindowSize();
+	SDL_Window* GetSDLwindow() { return window; }
+	int GetCurrentHeight() { return currentHeight; }
+	int GetCurrentWidth() { return currentWidth; }
 
-public:
+private:
 	//The window we'll be rendering to
 	SDL_Window* window = NULL;
 

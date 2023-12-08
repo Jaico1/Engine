@@ -29,7 +29,7 @@ bool ModuleOpenGL::Init()
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24); // we want to have a depth buffer with 24 bits
 	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8); // we want to have a stencil buffer with 8 bits
 
-	context = SDL_GL_CreateContext(App->GetWindow()->window);
+	context = SDL_GL_CreateContext(App->GetWindow()->GetSDLwindow());
 
 	GLenum err = glewInit();
 	// … check for errors
@@ -54,7 +54,7 @@ update_status ModuleOpenGL::PreUpdate()
 {
 	int height, width;
 
-	SDL_GetWindowSize(App->GetWindow()->window, &width, &height);
+	SDL_GetWindowSize(App->GetWindow()->GetSDLwindow(), &width, &height);
 
 	if (WindowResized(width, height)) {
 		glViewport(0, 0, width, height);
@@ -78,7 +78,7 @@ update_status ModuleOpenGL::Update()
 update_status ModuleOpenGL::PostUpdate()
 {
 
-	SDL_GL_SwapWindow(App->GetWindow()->window);
+	SDL_GL_SwapWindow(App->GetWindow()->GetSDLwindow());
 	return UPDATE_CONTINUE;
 }
 
@@ -96,7 +96,7 @@ bool ModuleOpenGL::CleanUp()
 
 bool ModuleOpenGL::WindowResized(unsigned width, unsigned height)
 {
-	if (App->GetWindow()-> currentWidth != width || App->GetWindow()->currentHeight != height)
+	if (App->GetWindow()-> GetCurrentWidth() != width || App->GetWindow()->GetCurrentHeight() != height)
 	{
 		App->GetWindow()->SetCurrentWindowSize();
 		return true;

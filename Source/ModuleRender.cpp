@@ -20,8 +20,8 @@ bool ModuleRender::Init() {
 
 
 	//model = math::float4x4::FromTRS(math::float3(2.0f, 0.0f, 0.0f), math::float3x3::RotateZ(math::pi / 4.0f), math::float3(2.0f, 1.0f, 1.0f));
-	view = App->GetCamera()->view;
-	proj = App->GetCamera()->proj;
+	view = App->GetCamera()->GetViewMatrix();
+	proj = App->GetCamera()->GetProjectionMatrix();
 
 
     VBO = CreateTriangleVBO();

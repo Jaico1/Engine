@@ -14,9 +14,14 @@ public:
 	update_status Update();
 	update_status PostUpdate();
 
-	void RenderPerformance();
-	void RenderProperties();
+	void RenderMainMenu();
+	void RenderPerformance()const;
+	void RenderProperties() const;
 	bool CleanUp();
-	
+private:
+	bool showAboutWindow = false;  
+	bool QUIT = false;
+	bool showEditorWindows = true;
+	bool showGitHubWindow = false;
 };
 

@@ -19,7 +19,7 @@ public:
 	void DestroyVBO(unsigned VBO);
 	
 
-public:
+private:
 
 	unsigned VBO;
 	unsigned shaderProgram;

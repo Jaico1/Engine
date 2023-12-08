@@ -24,10 +24,18 @@ public:
 	
 	void LoadGeometry();
 
+	using FileDropCallback = void (*)(const char*);
+
+	// Function to handle file drop events
+	void OnFileDrop(const char* filePath);
+
+	// Set the file drop callback
+	void SetFileDropCallback(FileDropCallback callback);
+
 	bool CleanUp();
 
 private:
-
+	FileDropCallback fileDropCallback;
 	std::vector<Model>Models;
 	
 };

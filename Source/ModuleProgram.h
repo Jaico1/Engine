@@ -12,10 +12,11 @@ public:
 	update_status PostUpdate();
 	bool CleanUp();
 
-	unsigned CompileShader(unsigned type, const char* source);
-	unsigned CreateProgram(unsigned vtx_shader, unsigned frg_shader);
+	
 
 public:
 	unsigned program;
+	unsigned CompileShader(unsigned type, const char* source);
+	unsigned CreateProgram(unsigned vtx_shader, unsigned frg_shader);
 };
 

@@ -19,4 +19,4 @@ enum update_status
 #define FULLSCREEN false
 #define VSYNC true
 #define ASSET_PATH "assets/"
-#define TITLE "Super Awesome Engine"
+#define TITLE "Turbonator Engine"

@@ -27,6 +27,7 @@ public:
 	const std::vector<Mesh*>& GetMeshes() const {
 		return Meshes;
 	}
+	
 private: 
 	
 	std::vector<Mesh*>Meshes;
@@ -43,7 +44,9 @@ public:
 	void CreateVAO();
 	void DestroyVBO(unsigned VBO);
 	int triangleCount;
-	
+	int GetNumIndices(){ return numIndices; }
+
+private:	
 	int numIndices;
 	int nodeIndex;
 	int vertexCount;
@@ -56,7 +59,6 @@ public:
 	float4x4 modelMatrixDuck = float4x4::FromTRS(math::float3(1.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(0.001f, 0.001f, 0.001f));
 	float4x4 modelMatrixBaker = float4x4::FromTRS(math::float3(0.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(20.0f, 30.0f, 20.0f));
 
-private:
 	
 };
 
@@ -78,11 +80,15 @@ ModuleGeometryLoader::~ModuleGeometryLoader() {
 bool ModuleGeometryLoader::Init() {
 
 	
-	model.Load("./assets/BakerHouse.gltf");
+
+	model.Load("../assets/BakerHouse.gltf");
 	Models.push_back(model);
 	/*model2.Load("./assets/Duck.gltf");
 	Models.push_back(model2);*/
-	
+
+	/*App->SetFileDropCallback([this](const char* filePath) {
+		this->OnFileDrop(filePath);
+		});*/
 
 	return true;
 }
@@ -109,6 +115,21 @@ bool ModuleGeometryLoader::CleanUp() {
 	return true;
 }
 
+void ModuleGeometryLoader::OnFileDrop(const char* filePath) {
+	
+	model.Load(filePath);
+	Models.push_back(model);
+
+	
+	if (fileDropCallback) {
+		fileDropCallback(filePath);
+	}
+}
+
+void ModuleGeometryLoader::SetFileDropCallback(FileDropCallback callback) {
+	fileDropCallback = callback;
+}
+
 void Model::Load(const char* assetFileName){
 
 
@@ -117,13 +138,32 @@ void Model::Load(const char* assetFileName){
 	tinygltf::TinyGLTF gltfContext;
 	tinygltf::Model model;
 
-
-	
 	std::string error, warning;
 	bool loadOk = gltfContext.LoadASCIIFromFile(&model, &error, &warning, assetFileName);
 	if (!loadOk)
 	{
 		LOG("Error loading %s: %s", assetFileName, error.c_str());
+	}
+
+	LOG("Number of scenes: %d", model.scenes.size());
+	LOG("Number of nodes: %d", model.nodes.size());
+	LOG("Number of meshes: %d", model.meshes.size());
+	LOG("Number of materials: %d", model.materials.size());
+
+	for (size_t i = 0; i < model.scenes.size(); ++i) {
+		LOG("Scene %d:", i);
+		const tinygltf::Scene& scene = model.scenes[i];
+		for (size_t j = 0; j < scene.nodes.size(); ++j) {
+			LOG("  Node %d: %s", j, model.nodes[scene.nodes[j]].name.c_str());
+		}
+	}
+
+	for (size_t i = 0; i < model.meshes.size(); ++i) {
+		LOG("Mesh %d:", i);
+		const tinygltf::Mesh& mesh = model.meshes[i];
+		LOG("  Name: %s", mesh.name.c_str());
+		LOG("  Number of primitives: %d", mesh.primitives.size());
+		// Add more detailed logging as needed
 	}
 
 	for (const auto& srcMesh : model.meshes)
@@ -145,6 +185,9 @@ void Model::Load(const char* assetFileName){
 
 void Model::LoadMaterials(const tinygltf::Model& srcModel)
 {
+
+	std::string baseDir = "..\\assets";
+
 	for (const auto& srcMaterial : srcModel.materials)
 	{
 		unsigned textureId = 0;
@@ -152,7 +195,17 @@ void Model::LoadMaterials(const tinygltf::Model& srcModel)
 		{
 			const tinygltf::Texture& texture = srcModel.textures[srcMaterial.pbrMetallicRoughness.baseColorTexture.index];
 			const tinygltf::Image& image = srcModel.images[texture.source];
-			textureId = App->GetTexture()->LoadTexture(image.uri.c_str());
+
+			std::string uri = image.uri;
+
+			// Check if uri starts with "..\assets"
+			if (uri.compare(0, baseDir.size(), baseDir) != 0)
+			{
+				// If not, concatenate the base directory
+				uri = baseDir + "\\" + uri;
+			}
+
+			textureId = App->GetTexture()->LoadTexture(uri.c_str());
 			LOG("texture id created")
 		}
 		textures.push_back(textureId);
@@ -342,8 +395,8 @@ void Mesh::Render(const std::vector<unsigned>& textures, int materialIndex, int 
 	glUseProgram(App->GetProgram()->program);
 
 
-	float4x4 view = App->GetCamera()->view;
-	float4x4 proj = App->GetCamera()->proj;
+	float4x4 view = App->GetCamera()->GetViewMatrix();
+	float4x4 proj = App->GetCamera()->GetProjectionMatrix();
 
 	//glUniformMatrix4fv(0, 1, GL_TRUE, modelMatrix.Transposed().ptr());
 
@@ -399,7 +452,7 @@ int ModuleGeometryLoader::GetTotalTriangleCount() {
 		Meshes=Models[i].GetMeshes();
 
 		for (int j = 0; j < Meshes.size(); j++) {
-					totalTriangleCount += Meshes[j]->numIndices;
+					totalTriangleCount += Meshes[j]->GetNumIndices();
 		}
 
 	}
@@ -412,6 +465,7 @@ void ModuleGeometryLoader::LoadGeometry() {
 		Models[i].Draw(i);
 	}
 }
+
 
 
 

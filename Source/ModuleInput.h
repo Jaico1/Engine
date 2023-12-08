@@ -16,11 +16,11 @@ public:
 	update_status Update();
 	bool CleanUp();
 	SDL_Keycode GetPressedKey() const { return pressedKey; }
-    void HandleKeyPress(SDL_Keycode key);
-	void HandleKeyUnpressed();
+   
 
 private:
 	const Uint8 *keyboard = NULL;
-	
+	void HandleKeyPress(SDL_Keycode key);
+	void HandleKeyUnpressed();
 	SDL_Keycode pressedKey;
 };

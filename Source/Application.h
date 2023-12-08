@@ -1,6 +1,7 @@
 #pragma once
 
 #include<list>
+
 #include "Globals.h"
 #include "Module.h"
 
@@ -40,6 +41,14 @@ public:
     ModuleGeometryLoader* GetMesh() { return mesh; }
     ModuleTexture* GetTexture() { return texture; }
 
+    using FileDropCallback = void (*)(const char*);
+
+    
+    void SetFileDropCallback(FileDropCallback callback);
+
+    
+    void HandleFileDrop(const char* filePath);
+
 
 private:
 
@@ -54,6 +63,7 @@ private:
     ModuleGeometryLoader* mesh= nullptr;
     ModuleTexture* texture = nullptr;
     std::list<Module*> modules;
+    FileDropCallback fileDropCallback;
 
 };
 

@@ -77,3 +77,14 @@ bool Application::CleanUp()
 
 	return ret;
 }
+
+void Application::SetFileDropCallback(FileDropCallback callback) {
+	fileDropCallback = callback;
+}
+
+void Application::HandleFileDrop(const char* filePath) {
+	// Call the registered file drop callback
+	if (fileDropCallback) {
+		fileDropCallback(filePath);
+	}
+}
