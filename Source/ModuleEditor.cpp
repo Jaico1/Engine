@@ -4,6 +4,8 @@
 #include "ModuleOpenGL.h"
 #include "ModuleInput.h"
 #include "ModuleWindow.h"
+#include "ModuleGeometryLoader.h"
+#include "ModuleTexture.h"
 #include "ImGUI\imgui.h"
 #include "ImGUI\imgui_impl_sdl2.h"
 #include "ImGUI\imgui_impl_opengl3.h"
@@ -101,6 +103,23 @@ bool ModuleEditor::CleanUp()
 void ModuleEditor::RenderProperties() {
 
     ImGui::Begin("Properties");
+    
+    if (ImGui::CollapsingHeader("Geometry", ImGuiTreeNodeFlags_DefaultOpen)) // ImGuiTreeNodeFlags_DefaultOpen will make it initially open
+    {
+        ImGui::Text("Total Triangles: %lu ", App->GetMesh()->GetTotalTriangleCount());
+        
+    }
+
+    // Section 2
+    if (ImGui::CollapsingHeader("Texture"))
+    {
+        ImGui::Text("Texture Height: %lu ", App->GetTexture()->textureHeight);
+       
+        ImGui::Text("Texture Width: %lu ", App->GetTexture()->textureWidth);
+    }
+
+
+    
 
 
     ImGui::End();

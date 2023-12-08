@@ -9,6 +9,7 @@
 #include "ModuleRender.h"
 #include "ModuleCamera.h"
 #include "ModuleGeometryLoader.h"
+#include "ModuleTexture.h"
 
 
 
@@ -26,6 +27,7 @@ Application::Application()
 	modules.push_back(debug = new ModuleDebugDraw());
 	modules.push_back(program = new ModuleProgram());
 	modules.push_back(renderer = new ModuleRender());
+	modules.push_back(texture = new ModuleTexture());
 	modules.push_back(mesh = new ModuleGeometryLoader());
 	modules.push_back(editor = new ModuleEditor());
 	

@@ -6,7 +6,7 @@
 
 using namespace std;
 
-ModuleTexture::ModuleTexture(){
+ModuleTexture::ModuleTexture() :textureHeight(0),textureWidth(0) {
 
 }
 
@@ -16,6 +16,8 @@ ModuleTexture::~ModuleTexture(){
 }
 
 bool ModuleTexture:: Init(){
+
+    
 	return true;
 
 }
@@ -41,7 +43,7 @@ unsigned ModuleTexture::LoadTexture(const char* filePath)
 {
     const char* narrowFilePath = filePath;
 
-    // Convert narrow string to wide string
+    
     size_t bufferSize = strlen(narrowFilePath) + 1;
     wchar_t* wideFilePath = new wchar_t[bufferSize];
     size_t convertedChars = 0;
@@ -50,12 +52,14 @@ unsigned ModuleTexture::LoadTexture(const char* filePath)
     DirectX::ScratchImage image;
     DirectX::LoadFromWICFile(wideFilePath, DirectX::WIC_FLAGS_NONE, nullptr, image);
    
-    // Assuming you have a valid OpenGL texture ID
+    textureWidth = image.GetMetadata().width;
+    textureHeight = image.GetMetadata().height;
+    
     unsigned textureID;
     glGenTextures(1, &textureID);
     glBindTexture(GL_TEXTURE_2D, textureID);
 
-    // Iterate through mip levels
+    
     for (size_t i = 0; i < image.GetMetadata().mipLevels; ++i)
     {
         
@@ -90,8 +94,10 @@ unsigned ModuleTexture::LoadTexture(const char* filePath)
         }
         
 
+        LOG("WIDTH:  %f", mip->width)
         // Upload texture data to OpenGL
         glTexImage2D(GL_TEXTURE_2D, i, internalFormat, mip->width, mip->height, 0, format, GL_UNSIGNED_BYTE, mip->pixels);
+         
     }
 
     // Set minification and magnification filters, and generate mipmaps if needed

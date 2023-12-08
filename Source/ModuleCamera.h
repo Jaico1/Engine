@@ -25,8 +25,10 @@ public:
 
 	
 
-	float yaw;
-	float pitch;
+	float yaw=-91.0f;
+	float pitch=0.0f;
+	float prevYaw;
+	float prevPitch;
 	float cameraSpeed;
 	float cameraSensitivity;
 	bool mouseDragging=false;

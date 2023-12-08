@@ -9,6 +9,8 @@
 #include "MathGeoLib.h" 
 #include "ModuleInput.h"
 
+using namespace std;
+
 ModuleCamera::ModuleCamera() {
 
 }
@@ -130,8 +132,9 @@ void ModuleCamera::HandleInput() {
 		cameraPosition -= cameraSpeed * cameraUp;
 	}
 	if (SDL_GetMouseState(nullptr, nullptr) & SDL_BUTTON(SDL_BUTTON_LEFT)) {
-		int mouseX, mouseY;
+		int mouseX = 1, mouseY= 1 ;
 		SDL_GetMouseState(&mouseX, &mouseY);
+
 
 		if (!mouseDragging) {
 			prevMouseX = mouseX;
@@ -139,19 +142,21 @@ void ModuleCamera::HandleInput() {
 			totalMouseDeltaX = 0;
 			totalMouseDeltaY = 0;
 			mouseDragging = true;
+
+			
 		}
 		else {
 			if (mouseX != prevMouseX || mouseY != prevMouseY) {
 				totalMouseDeltaX += mouseX - prevMouseX;
 				totalMouseDeltaY += mouseY - prevMouseY;
 
-				LOG("Before - Yaw: %f, Pitch: %f", yaw, pitch);
+				
 
 				float sensitivity = 0.01f;
-				yaw += totalMouseDeltaX * sensitivity;
+				yaw -= totalMouseDeltaX * sensitivity;
 				pitch -= totalMouseDeltaY * sensitivity;
 
-				LOG("After - Yaw: %f, Pitch: %f", yaw, pitch);
+				
 				const float yawClamp = 360.0f; // Adjust as needed
 				yaw = fmod(yaw, yawClamp);
 
@@ -179,13 +184,17 @@ void ModuleCamera::HandleInput() {
 
 				prevMouseX = mouseX;
 				prevMouseY = mouseY;
+
+				prevYaw = yaw;
+			    prevPitch = pitch;
 			}
 			
 		}
 	}
 	else {
-		// Reset dragging state when the left mouse button is not pressed
-		mouseDragging = false;
+		
+			mouseDragging = false;
+		
 	}
 }
 

@@ -1,5 +1,8 @@
 #pragma once
 #include "Module.h"
+
+
+
 class ModuleTexture :
     public Module
 {
@@ -16,5 +19,8 @@ public:
 	unsigned LoadTexture(const char* filePath);
 	unsigned LoadTexturePNG(const char* filePath);
 	unsigned texture;
+	size_t textureWidth ;
+	size_t textureHeight ;
 };
+
 

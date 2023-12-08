@@ -16,18 +16,19 @@
 
 using namespace std; 
 
-class Model;
-class Mesh;
-class Primitive;
 
 
 
 class Model {
 public:
 	void Load(const char* assetFileName);
-	void Draw();
+	void Draw(int modelIndex);
 	void LoadMaterials(const tinygltf::Model& srcModel);
+	const std::vector<Mesh*>& GetMeshes() const {
+		return Meshes;
+	}
 private: 
+	
 	std::vector<Mesh*>Meshes;
 	std::vector<unsigned> textures;
 
@@ -35,13 +36,16 @@ private:
 
 class Mesh {
 public:
+	Mesh();
 	void Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
 	void LoadEBO(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const tinygltf::Primitive& primitive);
-	void Render(const std::vector<unsigned>& textures);
+	void Render(const std::vector<unsigned>& textures, int materialIndex, int modelIndex);
 	void CreateVAO();
 	void DestroyVBO(unsigned VBO);
+	int triangleCount;
 	
 	int numIndices;
+	int nodeIndex;
 	int vertexCount;
 	unsigned vbo;
 	unsigned vao;
@@ -49,13 +53,21 @@ public:
 	unsigned texCoordVBO;
 
 
-	float4x4 model = float4x4::FromTRS(math::float3(0.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(20.0f, 20.0f, 10.0f));
+	float4x4 modelMatrixDuck = float4x4::FromTRS(math::float3(1.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(0.001f, 0.001f, 0.001f));
+	float4x4 modelMatrixBaker = float4x4::FromTRS(math::float3(0.0f, 0.0f, 0.0f), math::float3x3::identity, math::float3(20.0f, 30.0f, 20.0f));
 
+private:
+	
 };
+
+Mesh::Mesh() : triangleCount(0) {
+	
+}
 
 
 Mesh mesh;
 Model model;
+Model model2;
 
 ModuleGeometryLoader::ModuleGeometryLoader() {
 
@@ -67,6 +79,9 @@ bool ModuleGeometryLoader::Init() {
 
 	
 	model.Load("./assets/BakerHouse.gltf");
+	Models.push_back(model);
+	/*model2.Load("./assets/Duck.gltf");
+	Models.push_back(model2);*/
 	
 
 	return true;
@@ -77,7 +92,10 @@ update_status ModuleGeometryLoader::PreUpdate() {
 }
 update_status ModuleGeometryLoader::Update() {
 
-	model.Draw();
+	//model.Draw();
+	//model2.Draw();
+
+	LoadGeometry();
 
 	return UPDATE_CONTINUE;
 }
@@ -98,6 +116,9 @@ void Model::Load(const char* assetFileName){
 
 	tinygltf::TinyGLTF gltfContext;
 	tinygltf::Model model;
+
+
+	
 	std::string error, warning;
 	bool loadOk = gltfContext.LoadASCIIFromFile(&model, &error, &warning, assetFileName);
 	if (!loadOk)
@@ -118,6 +139,7 @@ void Model::Load(const char* assetFileName){
 		}
 	}
 	LoadMaterials(model);
+	
 	LOG("Textures:", textures.size())
 }
 
@@ -201,6 +223,55 @@ void Mesh::Load(const tinygltf::Model& model, const tinygltf::Mesh& mesh, const 
 		vertexCount = texCoordAcc.count;
 
 	}
+
+
+	//const std::vector<tinygltf::Node>Nodes = model.nodes;
+	//for (size_t i = 0; i < Nodes.size(); i++)
+	//{
+	//	if (Nodes[i].matrix.size() == 16) {
+	//		modelMatrix = math::float4x4(node[].matrix.data()).Transposed(); // Transpose for MathGeoLib
+	//	}
+	//	else
+	//	{
+	//		// If the node has individual translation, rotation, and scale components
+	//		math::float3 translation(node.translation[0], node.translation[1], node.translation[2]);
+	//		math::Quat rotation(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+	//		math::float3 scale(node.scale[0], node.scale[1], node.scale[2]);
+
+	//		// Create translation matrix
+	//		math::float4x4 translationMatrix = math::float4x4::Translate(translation.x, translation.y, translation.z);
+
+	//		// Create rotation matrix
+	//		math::float4x4 rotationMatrix(rotation);
+
+	//		// Create scale matrix
+	//		math::float4x4 scaleMatrix = math::float4x4::Scale(scale.x, scale.y, scale.z);
+
+	//		// Combine translation, rotation, and scale matrices
+	//		modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+	//	}
+	//	
+	//}
+
+
+	//float3 translation(node.translation[0], node.translation[1], node.translation[2]);
+	//Quat rotation(node.rotation[0], node.rotation[1], node.rotation[2], node.rotation[3]);
+	//float3 scale(node.scale[0], node.scale[1], node.scale[2]);
+
+	//////// Create translation matrix
+	//float4x4 translationMatrix = float4x4::Translate(translation.x, translation.y, translation.z);
+
+	//////// Create rotation matrix
+	//float4x4 rotationMatrix = float4x4(rotation);
+
+	//////// Create scale matrix
+	//float4x4 scaleMatrix = float4x4::Scale(scale.x, scale.y, scale.z);
+
+	//////// Combine translation, rotation, and scale matrices into a model matrix
+	//modelMatrix = translationMatrix * rotationMatrix * scaleMatrix;
+
+	////// Set the model matrix uniform
+	//
 }
 
 
@@ -249,20 +320,24 @@ void Mesh::CreateVAO() {
 
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	/*glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3 + sizeof(float) * 2, (void*)0);*/
+
 
 	glBindBuffer(GL_ARRAY_BUFFER, texCoordVBO);
 
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 0));
 
+	/*glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, (void*)(sizeof(float) * 3 * 0));*/
+
 	
-
-
 	glBindVertexArray(0);
 
 }
 
-void Mesh::Render(const std::vector<unsigned>& textures)
+void Mesh::Render(const std::vector<unsigned>& textures, int materialIndex, int modelIndex)
 {
 	glUseProgram(App->GetProgram()->program);
 
@@ -270,28 +345,71 @@ void Mesh::Render(const std::vector<unsigned>& textures)
 	float4x4 view = App->GetCamera()->view;
 	float4x4 proj = App->GetCamera()->proj;
 
-	glUniformMatrix4fv(0, 1, GL_TRUE, &model[0][0]);
+	//glUniformMatrix4fv(0, 1, GL_TRUE, modelMatrix.Transposed().ptr());
+
+	switch (modelIndex)
+	{
+
+	case 0:
+		glUniformMatrix4fv(0, 1, GL_TRUE, &modelMatrixBaker[0][0]);
+		break;
+	case 1:
+		glUniformMatrix4fv(0, 1, GL_TRUE, &modelMatrixDuck[0][0]);
+		break;
+	default:
+		break;
+	}
+	
+
+
 	glUniformMatrix4fv(1, 1, GL_TRUE, &view[0][0]);
-	glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
+    glUniformMatrix4fv(2, 1, GL_TRUE, &proj[0][0]);
 
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glBindTexture(GL_TEXTURE_2D, textures[materialIndex]);
 	glUniform1i(glGetUniformLocation(App->GetProgram()->program, "diffuse"), 0);
 	/*glEnableVertexAttribArray(1);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0,(void*)(sizeof(float) * 3 * 3));*/
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, nullptr);
+
+	
+
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR) {
 		LOG("OpenGL Error after glDrawArrays: %x", error);
 	}
 }
 
-void Model::Draw() {
+void Model::Draw(int modelIndex) {
 	for (int i = 0; i < Meshes.size(); i++)
 	{
-		Meshes[i]->Render(textures);
+		Meshes[i]->Render(textures, textures.size()-1, modelIndex); 
+	}
+}
+
+int ModuleGeometryLoader::GetTotalTriangleCount() {
+
+	std::vector<Mesh*>Meshes;
+
+	int totalTriangleCount = 0;
+	for (size_t i = 0; i < Models.size(); i++)
+	{
+		Meshes=Models[i].GetMeshes();
+
+		for (int j = 0; j < Meshes.size(); j++) {
+					totalTriangleCount += Meshes[j]->numIndices;
+		}
+
+	}
+	return totalTriangleCount/3;
+}
+
+void ModuleGeometryLoader::LoadGeometry() {
+	for (size_t i = 0; i < Models.size(); i++)
+	{
+		Models[i].Draw(i);
 	}
 }
 
