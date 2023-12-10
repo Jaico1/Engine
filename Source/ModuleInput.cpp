@@ -28,13 +28,15 @@ bool ModuleInput::Init()
 	}
 
 	return ret;
+
+
 }
 
 // Called every draw update
 update_status ModuleInput::Update()
 {
     SDL_Event sdlEvent;
-
+    //LOG("filepath: %d", filepath);
     while (SDL_PollEvent(&sdlEvent) != 0)
     {
 
@@ -54,6 +56,10 @@ update_status ModuleInput::Update()
             case SDL_KEYUP:
                 HandleKeyUnpressed();
                 break;
+            case SDL_DROPFILE:
+                HandleFileDrop(sdlEvent.drop.file);
+                SDL_free(sdlEvent.drop.file); 
+                break;
         }
     }
 
@@ -62,6 +68,12 @@ update_status ModuleInput::Update()
     return UPDATE_CONTINUE;
 }
 
+update_status ModuleInput::PostUpdate() {
+
+    filepath = "";
+
+    return UPDATE_CONTINUE;
+}
 // Called before quitting
 bool ModuleInput::CleanUp()
 {
@@ -82,4 +94,10 @@ void ModuleInput::HandleKeyUnpressed()
 
     pressedKey = SDLK_UNKNOWN;
 
+}
+
+void ModuleInput::HandleFileDrop(const char* dropFilePath)
+{
+    
+    filepath= dropFilePath;
 }

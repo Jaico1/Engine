@@ -15,6 +15,7 @@ public:
 	
 
 public:
+	unsigned programTexture;
 	unsigned program;
 	unsigned CompileShader(unsigned type, const char* source);
 	unsigned CreateProgram(unsigned vtx_shader, unsigned frg_shader);

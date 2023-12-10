@@ -27,7 +27,7 @@ public:
 	using FileDropCallback = void (*)(const char*);
 
 	// Function to handle file drop events
-	void OnFileDrop(const char* filePath);
+	void OnFileDrop();
 
 	// Set the file drop callback
 	void SetFileDropCallback(FileDropCallback callback);
@@ -37,6 +37,7 @@ public:
 private:
 	FileDropCallback fileDropCallback;
 	std::vector<Model>Models;
+	const char* droppedFile;
 	
 };
 

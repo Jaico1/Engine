@@ -144,7 +144,7 @@ void ModuleEditor::RenderMainMenu() {
     // Display About window if the flag is set
     if (showAboutWindow) {
         ImGui::Begin("About", &showAboutWindow);
-        ImGui::Text("Information about the engine...");
+        ImGui::Text("Version:0.0.1");
         // Add more information or widgets as needed
         ImGui::End();
     }

@@ -15,7 +15,7 @@ ModuleProgram::~ModuleProgram() {
 
 bool ModuleProgram::Init() {
 
-	const char* vertexShaderSource = "#version 430\n"
+	const char* vertexShaderSourceTexture = "#version 430\n"
     "layout (location = 0) in vec3 my_vertex_position;\n"
 	"layout(location = 1) in vec2 vertex_uv0;\n"
     "layout(location = 0) uniform mat4 model;\n"
@@ -29,13 +29,36 @@ bool ModuleProgram::Init() {
 		"uv0 = vertex_uv0;\n"
 		"}\0";
 
-	const char* fragmentShaderSource = "#version 430 \n"
+	const char* fragmentShaderSourceTexture = "#version 430 \n"
 		"out vec4 color;\n"
 		"in vec2 uv0;\n"
 		"uniform sampler2D diffuse;\n"
 		"void main()\n"
 		"{\n"
 		"	color =  texture2D(diffuse, uv0);\n"
+		"}\0";
+
+	const char* vertexShaderSource = "#version 430\n"
+		"layout (location = 0) in vec3 my_vertex_position;\n"
+		"layout(location = 1) in vec2 vertex_uv0;\n"
+		"layout(location = 0) uniform mat4 model;\n"
+		"layout(location = 1) uniform mat4 view;\n"
+		"layout(location = 2) uniform mat4 proj;\n"
+		
+
+		"void main()\n"
+		"{\n"
+		"   gl_Position = proj * view * model * vec4(my_vertex_position, 1.0);\n"
+		
+		"}\0";
+
+	const char* fragmentShaderSource = "#version 430 \n"
+		"out vec4 color;\n"
+		
+		"uniform sampler2D diffuse;\n"
+		"void main()\n"
+		"{\n"
+		"	color = vec4(1.0, 0.0, 0.0, 1.0);\n"
 		"}\0";
 
 	unsigned int vertexShader = CompileShader(GL_VERTEX_SHADER,vertexShaderSource);
@@ -62,6 +85,34 @@ bool ModuleProgram::Init() {
 
 	// Check program linking status
 	glGetProgramiv(program, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		printf("Shader program linking failed: %s\n", infoLog);
+	}
+
+	unsigned int vertexShaderTexture = CompileShader(GL_VERTEX_SHADER, vertexShaderSourceTexture);
+	unsigned int fragmentShaderTexture = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSourceTexture);
+
+	programTexture = CreateProgram(vertexShaderTexture, fragmentShaderTexture);
+
+	
+
+	// Check vertex shader compilation status
+	glGetShaderiv(vertexShaderTexture, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		printf("Vertex shader compilation failed: %s\n", infoLog);
+	}
+
+	// Check fragment shader compilation status
+	glGetShaderiv(fragmentShaderTexture, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		printf("Fragment shader compilation failed: %s\n", infoLog);
+	}
+
+	// Check program linking status
+	glGetProgramiv(programTexture, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(program, 512, NULL, infoLog);
 		printf("Shader program linking failed: %s\n", infoLog);
