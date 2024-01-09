@@ -1,6 +1,8 @@
 #pragma once
 #include "Module.h"
 #include "MathGeoLib.h" 
+#include <vector>
+
 class ModuleRender :
     public Module
 {
@@ -15,14 +17,21 @@ public:
 	bool CleanUp();
 
 	unsigned CreateTriangleVBO();
-	void RenderVBO(unsigned VBO, unsigned shaderProgram);
+	void CreateVAO();
+	void RenderVBO( unsigned shaderProgram);
 	void DestroyVBO(unsigned VBO);
+	
+	unsigned int loadTexture(const char* filePath);
+
 	
 
 private:
 
 	unsigned VBO;
+	unsigned VAO;
 	unsigned shaderProgram;
+	unsigned textureCubeMap;
+	unsigned int textureVBO;
 	math::float4x4 model;
 	math::float4x4 view;
 	math::float4x4 proj;

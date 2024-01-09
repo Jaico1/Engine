@@ -111,6 +111,51 @@ unsigned ModuleTexture::LoadTexture(const char* filePath)
     return textureID;
 
 }
+
+
+unsigned ModuleTexture::LoadCubeMap(const char* fileName)
+{
+    unsigned texture = 0;
+
+    const char* narrowFilePath = fileName;
+
+
+    size_t bufferSize = strlen(narrowFilePath) + 1;
+    wchar_t* wideFilePath = new wchar_t[bufferSize];
+    size_t convertedChars = 0;
+    mbstowcs_s(&convertedChars, wideFilePath, bufferSize, narrowFilePath, _TRUNCATE);
+
+    DirectX::ScratchImage image;
+
+    HRESULT res = DirectX::LoadFromDDSFile(wideFilePath, DirectX::DDS_FLAGS_NONE, nullptr, image);
+
+    if (res == S_OK)
+    {
+        const DirectX::TexMetadata& metadata = image.GetMetadata();
+
+        glGenTextures(1, &texture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+
+        for (uint32_t i = 0; i < metadata.arraySize; ++i)
+        {
+            const DirectX::Image* face = image.GetImage(0, i, 0);
+
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, face->width, face->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, face->pixels);
+        }
+
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // TODO: Other texture parametersç
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        return texture;
+    }
+
+    //TODO: Manage error
+
+}
+
 //
 //unsigned ModuleTexture::LoadTexturePNG(const char* filePath)
 //{

@@ -17,6 +17,7 @@ public:
 	bool CleanUp();
 	unsigned LoadTexture(const char* filePath);
 	unsigned LoadTexturePNG(const char* filePath);
+	unsigned LoadCubeMap(const char* fileName);
 	size_t textureWidth ;
 	size_t textureHeight ;
 

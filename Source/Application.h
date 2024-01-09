@@ -35,8 +35,8 @@ public:
     ModuleInput*  GetInput() { return input; }
     ModuleEditor* GetEditor() { return editor; }
     ModuleProgram* GetProgram() { return program; }
-    ModuleDebugDraw* GetDebug() { return debug; }
     ModuleRender* GetRender() { return renderer; }
+    ModuleDebugDraw* GetDebug() { return debug; }
     ModuleCamera* GetCamera() { return camera; }
     ModuleGeometryLoader* GetMesh() { return mesh; }
     ModuleTexture* GetTexture() { return texture; }

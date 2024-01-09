@@ -85,8 +85,8 @@ bool ModuleGeometryLoader::Init() {
 
 	
 
-	model.Load("../assets/BakerHouse.gltf");
-	Models.push_back(model);
+	/*model.Load("../assets/BakerHouse.gltf");
+	Models.push_back(model);*/
 
 
 	return true;
@@ -98,8 +98,8 @@ update_status ModuleGeometryLoader::PreUpdate() {
 update_status ModuleGeometryLoader::Update() {
 
 
-	LoadGeometry();
-	OnFileDrop();
+	/*LoadGeometry();
+	OnFileDrop();*/
 	return UPDATE_CONTINUE;
 }
 update_status ModuleGeometryLoader::PostUpdate() {

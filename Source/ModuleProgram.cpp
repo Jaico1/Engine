@@ -29,13 +29,36 @@ bool ModuleProgram::Init() {
 		"uv0 = vertex_uv0;\n"
 		"}\0";
 
-	const char* fragmentShaderSourceTexture = "#version 430 \n"
+	const char* fragmentShaderSourceTexture = "#version 430 \n"	
 		"out vec4 color;\n"
 		"in vec2 uv0;\n"
 		"uniform sampler2D diffuse;\n"
 		"void main()\n"
 		"{\n"
 		"	color =  texture2D(diffuse, uv0);\n"
+		"}\0";
+
+	const char* vertexShaderSourceCubeMap = "#version 430\n"
+		"layout (location = 0) in vec3 pos;\n"
+		"layout(location = 1) uniform mat4 view;\n"
+		"layout(location = 2) uniform mat4 proj;\n"
+		"out vec3 TexCords;\n"
+
+		"void main()\n"
+		"{\n"
+		"	TexCoords = my_vertex_position;\n"
+		"   gl_Position = proj * view * vec4(my_vertex_position, 1.0);\n"	
+		//"	gl_Position = p.xyww;\n"	
+
+		"}\0";
+	
+	const char* fragmentShaderSourceCubeMap = "#version 430 \n"
+		"out vec4 color;\n"
+		"in vec3 TexCoords;\n"
+		"uniform samplerCube skybox;\n"
+		"void main()\n"
+		"{\n"
+		"	color =  texture(skybox, uv0);\n"
 		"}\0";
 
 	const char* vertexShaderSource = "#version 430\n"
@@ -113,6 +136,33 @@ bool ModuleProgram::Init() {
 
 	// Check program linking status
 	glGetProgramiv(programTexture, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(program, 512, NULL, infoLog);
+		printf("Shader program linking failed: %s\n", infoLog);
+	}
+
+	unsigned int vertexShaderSkyBox = CompileShader(GL_VERTEX_SHADER, vertexShaderSourceCubeMap);
+	unsigned int fragmentShaderSkyBox = CompileShader(GL_FRAGMENT_SHADER, fragmentShaderSourceCubeMap);
+
+	programCubeMap = CreateProgram(vertexShaderSkyBox, fragmentShaderSkyBox);
+
+
+	// Check vertex shader compilation status
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		printf("Vertex shader compilation failed: %s\n", infoLog);
+	}
+
+	// Check fragment shader compilation status
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+		printf("Fragment shader compilation failed: %s\n", infoLog);
+	}
+
+	// Check program linking status
+	glGetProgramiv(program, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(program, 512, NULL, infoLog);
 		printf("Shader program linking failed: %s\n", infoLog);
