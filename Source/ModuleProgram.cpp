@@ -40,15 +40,16 @@ bool ModuleProgram::Init() {
 
 	const char* vertexShaderSourceCubeMap = "#version 430\n"
 		"layout (location = 0) in vec3 pos;\n"
+
 		"layout(location = 1) uniform mat4 view;\n"
 		"layout(location = 2) uniform mat4 proj;\n"
-		"out vec3 TexCords;\n"
+		"out vec3 TexCoords;\n"
 
 		"void main()\n"
 		"{\n"
-		"	TexCoords = my_vertex_position;\n"
-		"   gl_Position = proj * view * vec4(my_vertex_position, 1.0);\n"	
-		//"	gl_Position = p.xyww;\n"	
+		"	TexCoords = pos;\n"
+		"   vec4 p = proj*vec4(mat3(view)* pos, 1.0);\n"	
+		"	gl_Position = p.xyww;\n"	
 
 		"}\0";
 	
@@ -58,7 +59,7 @@ bool ModuleProgram::Init() {
 		"uniform samplerCube skybox;\n"
 		"void main()\n"
 		"{\n"
-		"	color =  texture(skybox, uv0);\n"
+		"	color =  texture(skybox, TexCoords);\n"
 		"}\0";
 
 	const char* vertexShaderSource = "#version 430\n"

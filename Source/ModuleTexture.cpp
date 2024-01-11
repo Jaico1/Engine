@@ -119,7 +119,6 @@ unsigned ModuleTexture::LoadCubeMap(const char* fileName)
 
     const char* narrowFilePath = fileName;
 
-
     size_t bufferSize = strlen(narrowFilePath) + 1;
     wchar_t* wideFilePath = new wchar_t[bufferSize];
     size_t convertedChars = 0;
@@ -140,20 +139,34 @@ unsigned ModuleTexture::LoadCubeMap(const char* fileName)
         {
             const DirectX::Image* face = image.GetImage(0, i, 0);
 
+            if (face == nullptr)
+            {
+                // Failed to get image data for a face
+                LOG("Error: Failed to get image data for face ");
+                glDeleteTextures(1, &texture); // Clean up the texture
+                delete[] wideFilePath;
+                return 0;
+            }
+
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA8, face->width, face->height, 0, GL_RGBA, GL_UNSIGNED_BYTE, face->pixels);
         }
 
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        // TODO: Other texture parametersç
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        delete[] wideFilePath;
         return texture;
     }
-
-    //TODO: Manage error
-
+    else
+    {
+        // Failed to load the texture
+        LOG("Error: Failed to load texture from file '" )
+        delete[] wideFilePath;
+        return 0;
+    }
 }
 
 //

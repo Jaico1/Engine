@@ -35,11 +35,12 @@ public:
     ModuleInput*  GetInput() { return input; }
     ModuleEditor* GetEditor() { return editor; }
     ModuleProgram* GetProgram() { return program; }
+    ModuleTexture* GetTexture() { return texture; }
     ModuleRender* GetRender() { return renderer; }
     ModuleDebugDraw* GetDebug() { return debug; }
     ModuleCamera* GetCamera() { return camera; }
     ModuleGeometryLoader* GetMesh() { return mesh; }
-    ModuleTexture* GetTexture() { return texture; }
+   
 
     using FileDropCallback = void (*)(const char*);
 
